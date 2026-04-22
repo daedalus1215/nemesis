@@ -1,0 +1,4 @@
+npm run lint
+npm run depcruise
+npm run build
+npm test

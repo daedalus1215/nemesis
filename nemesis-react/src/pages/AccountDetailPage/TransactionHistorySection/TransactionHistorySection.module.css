@@ -1,0 +1,137 @@
+
+.transactionsList {
+    /* display: flex;
+    flex-direction: column;
+    height: calc(100vh - 400px);
+    gap: 10px; */
+    /* overflow-y: scroll; */
+}
+
+.transactionItem {
+    background: var(--color-surface);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 10px;
+    border: 2px solid var(--color-border);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px var(--color-shadow);
+}
+
+.transactionItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--color-shadow);
+    border-color: var(--color-primary);
+}
+
+.transactionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.transactionType {
+    font-size: 20px;
+}
+
+.transactionAmount {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.incoming {
+    color: #28a745;
+}
+
+.outgoing {
+    color: #dc3545;
+}
+
+.transactionDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.transactionDescription {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.transactionMeta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.transactionCategory {
+    background: #e9ecef;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.transactionDate {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.transactionStatus {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.noTransactions {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.noTransactionsTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.noTransactionsMessage {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 16px;
+    color: #666;
+}
+
+.loadingMore {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.noMoreTransactions {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+
+
+@media (max-width: 480px) {
+    .transactionMeta {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+}

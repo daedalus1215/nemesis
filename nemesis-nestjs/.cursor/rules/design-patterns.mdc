@@ -1,0 +1,517 @@
+---
+description: Design patterns and architectural conventions used in the codebase
+globs: 
+  - "**/app/**/*.ts"
+  - "**/domain/**/*.ts"
+  - "**/infra/**/*.ts"
+alwaysApply: true
+---
+
+# Design Patterns
+
+This document outlines the common design patterns used throughout the codebase, including their names, locations, purposes, and examples.
+
+---
+
+## 1. Responder Pattern
+
+### Name
+**Responder** (also referred to as Converter in some contexts)
+
+### Location
+`app/actions/<action-name>/` or `app/controllers/<controller-name>/`
+
+### Purpose
+Converts domain entities to response DTOs, separating presentation concerns from domain logic. Responders handle the transformation between internal domain models and external API contracts.
+
+### Role
+- Maps domain entities to DTOs for API responses
+- Handles data transformation, type conversions, and field selection
+- Keeps response mapping logic separate from action/controller code
+- Enables consistent response formatting across the application
+
+### Structure
+```typescript
+import { Injectable } from '@nestjs/common';
+import { DomainEntity } from '../../../domain/entities/domain.entity';
+import { ResponseDto } from './response.dto';
+
+@Injectable()
+export class FeatureResponder {
+  // For collections or complex response objects
+  public apply(entities: DomainEntity[]): ResponseDto {
+    return {
+      items: entities.map((entity) => this.toDto(entity)),
+      success: true,
+    };
+  }
+
+  // For single entities
+  public toDto(entity: DomainEntity): ItemDto {
+    return {
+      id: entity.id,
+      // ... map other fields
+    };
+  }
+}
+```
+
+### Examples
+
+**Example 1: Collection Response (with wrapper)**
+```typescript
+// src/invoices/app/actions/fetch-invoices-action/fetch-invoices.responder.ts
+@Injectable()
+export class FetchInvoicesResponder {
+  public apply(invoices: Invoice[]): FetchInvoicesResponseDto {
+    return {
+      invoices: invoices.map((invoice) => this.toDto(invoice)),
+      success: true,
+    };
+  }
+
+  private toDto(invoice: Invoice): InvoiceDto {
+    return {
+      id: invoice.id,
+      issuerUserId: invoice.issuerUserId,
+      debtorUserId: invoice.debtorUserId,
+      total: Number(invoice.total),
+      balanceDue: Number(invoice.balanceDue),
+      status: invoice.status,
+      issueDate: invoice.issueDate,
+      dueDate: invoice.dueDate,
+    };
+  }
+}
+```
+
+**Example 2: Array Response**
+```typescript
+// src/users/app/controllers/fetch-user-action/fetch-user.responder.ts
+@Injectable()
+export class FetchUserResponder {
+  public apply(entities: User[]): FetchUserResponseDto[] {
+    return entities.map((entity) => ({
+      username: entity.username,
+      id: entity.id,
+    }));
+  }
+}
+```
+
+**Example 3: Single Entity Response**
+```typescript
+// src/users/app/controllers/fetch-profile-action/fetch-profile.responder.ts
+@Injectable()
+export class FetchProfileResponder {
+  public toDto(entity: User): FetchProfileResponseDto {
+    return {
+      username: entity.username,
+      id: entity.id,
+    };
+  }
+}
+```
+
+**Example 4: Entity with Transformation**
+```typescript
+// src/users/app/controllers/register-user-action/register-user.responder.ts
+@Injectable()
+export class RegisterUserResponder {
+  public apply(entity: User): RegisterUserResponseDto {
+    return {
+      ...entity,
+      id: entity.id.toString(), // Transform number to string
+    };
+  }
+}
+```
+
+### Usage in Actions
+```typescript
+@Controller('invoices')
+export class FetchInvoicesAction {
+  constructor(
+    private readonly invoiceService: InvoiceService,
+    private readonly responder: FetchInvoicesResponder,
+  ) {}
+
+  @Get()
+  async handle(@GetAuthUser() user: AuthUser): Promise<FetchInvoicesResponseDto> {
+    const invoices = await this.invoiceService.getInvoices(user.userId);
+    return this.responder.apply(invoices);
+  }
+}
+```
+
+### Module Registration
+Responders must be registered in the module's `providers` array:
+
+```typescript
+@Module({
+  providers: [
+    // ... other providers
+    FetchInvoicesResponder,
+  ],
+  controllers: [FetchInvoicesAction],
+})
+export class InvoicesModule {}
+```
+
+### Naming Convention
+- File: `<feature-name>.responder.ts`
+- Class: `<FeatureName>Responder`
+- Located in the same directory as the action/controller it serves
+
+### When to Use
+- ✅ Always use responders when mapping domain entities to response DTOs
+- ✅ Use when you need to transform or format data for API responses
+- ✅ Use when you want to keep response formatting logic separate from business logic
+- ❌ Don't put response mapping logic directly in actions/controllers
+- ❌ Don't put business logic in responders (responders are only for data transformation)
+
+---
+
+## 2. Transaction Script Pattern
+
+### Name
+**Transaction Script**
+
+### Location
+`domain/transaction-scripts/<feature-name>-TS/`
+
+### Purpose
+Encapsulates all domain logic for a single feature or operation in a single class method.
+
+### Role
+- Contains all business rules and validation for a specific operation
+- Orchestrates domain logic flow
+- Uses repositories to persist/fetch data
+- Ensures atomic operations and business rule enforcement
+
+### Example
+```typescript
+// src/invoices/domain/transaction-scripts/fetch-invoices-TS/fetch-invoices.transaction.script.ts
+@Injectable()
+export class FetchInvoicesTransactionScript {
+  constructor(private readonly invoiceRepository: InvoiceRepository) {}
+
+  async execute(
+    userId: number,
+    statuses?: InvoiceStatusType[],
+  ): Promise<Invoice[]> {
+    return await this.invoiceRepository.findByUserIdWithStatusFilter(
+      userId,
+      statuses,
+    );
+  }
+}
+```
+
+---
+
+## 3. Aggregator Pattern
+
+### Name
+**Aggregator**
+
+### Location
+`domain/aggregators/`
+
+### Purpose
+Provides domain-specific operations that can be used by services in other domains, enabling cross-domain functionality while maintaining loose coupling.
+
+### Role
+- Exposes domain capabilities to other domains
+- Maintains domain boundaries
+- Provides a clean API for cross-domain operations
+
+---
+
+## 4. Repository Pattern
+
+### Name
+**Repository**
+
+### Location
+`infra/repositories/`
+
+### Purpose
+Abstracts data access logic, providing a clean interface for persisting and retrieving domain entities.
+
+### Role
+- Handles all database operations
+- Provides methods for querying and saving entities
+- Abstracts away TypeORM or other ORM details
+
+---
+
+## 5. Action/Controller Pattern
+
+### Name
+**Action** or **Controller**
+
+### Location
+`app/actions/` or `app/controllers/`
+
+### Purpose
+Handles HTTP requests, validates input via DTOs, orchestrates service calls, and returns responses via responders.
+
+### Role
+- Entry point for HTTP requests
+- Request validation and parsing
+- Delegates to services (never directly to transaction scripts)
+- Uses responders to format responses
+- Handles authentication and authorization concerns
+
+---
+
+## 6. Service Pattern
+
+### Name
+**Service** (Domain Service)
+
+### Location
+`domain/services/`
+
+### Purpose
+Orchestrates domain operations, delegates to transaction scripts, and may use aggregators for cross-domain needs.
+
+### Role
+- Coordinates domain operations
+- May use aggregators for cross-domain logic
+- Delegates to transaction scripts for business operations
+- Provides a cohesive API for actions/controllers and app services
+
+### Dependencies
+- ✅ **Can use:** Transaction Scripts, Aggregators (from same or other domains)
+- ❌ **Cannot use:** Repositories (only transaction scripts use repositories)
+- ❌ **Cannot use:** App Services
+
+### Example
+```typescript
+// src/invoices/domain/services/invoice.service.ts
+@Injectable()
+export class InvoiceService {
+  constructor(
+    private readonly createInvoiceTransactionScript: CreateInvoiceTransactionScript,
+    private readonly fetchInvoicesTransactionScript: FetchInvoicesTransactionScript,
+    private readonly updateInvoiceStatusTransactionScript: UpdateInvoiceStatusTransactionScript,
+  ) {}
+
+  async createInvoice(dto: CreateInvoiceRequestDto, issuerUserId: number): Promise<Invoice> {
+    return await this.createInvoiceTransactionScript.execute(dto, issuerUserId);
+  }
+
+  async applyPaymentToInvoice(invoiceId: number, paymentAmount: number): Promise<Invoice> {
+    const invoice = await this.getInvoiceById(invoiceId);
+    // ... validation logic ...
+    return await this.updateInvoiceStatusTransactionScript.execute(
+      invoiceId,
+      newBalanceDue,
+      newStatus,
+    );
+  }
+}
+```
+
+---
+
+## 7. App Service Pattern
+
+### Name
+**App Service** (Application Service)
+
+### Location
+`app/app-service/`
+
+### Purpose
+Orchestrates cross-domain operations by coordinating multiple domain services. App Services handle use cases that span multiple domains.
+
+### Role
+- Coordinates operations across multiple domain services
+- Orchestrates complex workflows involving multiple domains
+- Handles cross-domain validation and business rules
+- Provides a higher-level API for actions/controllers
+
+### Dependencies
+- ✅ **Can use:** Domain Services (from same or other domains)
+- ❌ **Cannot use:** Repositories (repositories are only for transaction scripts)
+- ❌ **Cannot use:** Aggregators directly (use domain services that wrap aggregators)
+- ❌ **Cannot use:** Transaction Scripts directly (use domain services that delegate to transaction scripts)
+
+### Key Differences from Domain Services
+
+| Aspect | Domain Service | App Service |
+|--------|---------------|-------------|
+| **Location** | `domain/services/` | `app/app-service/` |
+| **Can use Transaction Scripts** | ✅ Yes | ❌ No |
+| **Can use Aggregators** | ✅ Yes | ❌ No |
+| **Can use Repositories** | ❌ No | ❌ No |
+| **Can use Domain Services** | ❌ No | ✅ Yes |
+| **Purpose** | Single-domain orchestration | Cross-domain orchestration |
+| **Used by** | Actions/Controllers, App Services | Actions/Controllers only |
+
+### Example
+```typescript
+// src/invoices/app/app-service/invoice.app.service.ts
+@Injectable()
+export class InvoiceAppService {
+  constructor(
+    private readonly paymentService: PaymentService,      // Domain service from payments domain
+    private readonly invoiceService: InvoiceService,       // Domain service from invoices domain
+  ) {}
+
+  async payInvoice(
+    invoiceId: number,
+    paymentAmount: number | undefined,
+    debtorUserId: number,
+  ): Promise<{ paymentId: number; success: boolean }> {
+    // Get invoice using domain service
+    const invoice = await this.invoiceService.getInvoiceById(invoiceId);
+    
+    // Validation logic...
+    
+    // Make payment using domain service (cross-domain)
+    const result = await this.paymentService.transferBetweenUsers(
+      invoice.debtorUserId,
+      invoice.issuerUserId,
+      amountToPay,
+      debtorUserId,
+      `Payment for Invoice #${invoice.id}`,
+    );
+
+    // Create payment application using domain service
+    await this.paymentService.createPaymentApplication(
+      result.paymentId,
+      invoice.id,
+      amountToPay,
+    );
+
+    // Update invoice using domain service
+    await this.invoiceService.applyPaymentToInvoice(invoice.id, amountToPay);
+
+    return { paymentId: result.paymentId, success: true };
+  }
+}
+```
+
+### ❌ Incorrect Usage (What NOT to Do)
+```typescript
+// ❌ WRONG: App Service using repositories directly
+@Injectable()
+export class InvoiceAppService {
+  constructor(
+    private readonly invoiceRepository: InvoiceRepository,  // ❌ Cannot use repositories
+    private readonly paymentAggregator: PaymentAggregator,  // ❌ Cannot use aggregators
+  ) {}
+}
+```
+
+### ✅ Correct Usage
+```typescript
+// ✅ CORRECT: App Service using only domain services
+@Injectable()
+export class InvoiceAppService {
+  constructor(
+    private readonly invoiceService: InvoiceService,      // ✅ Domain service
+    private readonly paymentService: PaymentService,       // ✅ Domain service
+  ) {}
+}
+```
+
+### When to Use App Services
+- ✅ When orchestrating operations across multiple domains
+- ✅ When a use case requires coordination between domain services from different domains
+- ✅ When you need to combine multiple domain operations into a single transaction-like workflow
+- ❌ Don't use for single-domain operations (use domain services instead)
+- ❌ Don't use for simple CRUD operations (use domain services directly from actions)
+
+---
+
+## Summary Table
+
+| Pattern | Location | Purpose | Key Responsibility |
+|---------|----------|---------|-------------------|
+| **Responder** | `app/actions/` or `app/controllers/` | Entity → DTO mapping | Transform domain entities to response DTOs |
+| **Transaction Script** | `domain/transaction-scripts/` | Business logic encapsulation | Contains all domain logic for a feature |
+| **Aggregator** | `domain/aggregators/` | Cross-domain operations | Provides domain capabilities to other domains |
+| **Repository** | `infra/repositories/` | Data access | Handles persistence and retrieval |
+| **Action/Controller** | `app/actions/` or `app/controllers/` | HTTP request handling | Entry point, validation, orchestration |
+| **Domain Service** | `domain/services/` | Domain orchestration | Coordinates operations, delegates to transaction scripts |
+| **App Service** | `app/app-service/` | Cross-domain orchestration | Coordinates multiple domain services for complex workflows |
+
+---
+
+## 8. Functional Programming Style
+
+### Preference
+Prefer functional programming style when writing actions, services, and other code. Avoid creating intermediate variables when not needed.
+
+### Principles
+- **No unnecessary variables**: If a value is only used once and immediately, don't create a variable for it
+- **Compose operations**: Chain operations together when it improves readability
+- **Pure functions**: Prefer functions without side effects where possible
+- **Direct returns**: Return the result of operations directly when possible
+
+### Examples
+
+**❌ Avoid: Creating unnecessary intermediate variables**
+```typescript
+async handle(@GetAuthUser() user: AuthUser): Promise<ResponseDto> {
+  const invoices = await this.invoiceService.getInvoices(user.userId);
+  return this.responder.apply(invoices);
+}
+```
+
+**✅ Prefer: Direct return without intermediate variable**
+```typescript
+async handle(@GetAuthUser() user: AuthUser): Promise<ResponseDto> {
+  return this.responder.apply(
+    await this.invoiceService.getInvoices(user.userId)
+  );
+}
+```
+
+**❌ Avoid: Multiple intermediate variables**
+```typescript
+async handle(@Body() dto: RequestDto, @GetAuthUser() user: AuthUser): Promise<ResponseDto> {
+  const entity = await this.service.create(dto, user.userId);
+  const result = this.responder.apply(entity, dto);
+  return result;
+}
+```
+
+**✅ Prefer: Direct composition**
+```typescript
+async handle(@Body() dto: RequestDto, @GetAuthUser() user: AuthUser): Promise<ResponseDto> {
+  return this.responder.apply(
+    await this.service.create(dto, user.userId),
+    dto,
+  );
+}
+```
+
+### When to Use Variables
+- ✅ When the value is used multiple times
+- ✅ When it significantly improves readability
+- ✅ When extracting the value makes error handling clearer
+- ✅ When the variable name adds meaningful context
+
+### When NOT to Use Variables
+- ❌ When the value is only used once immediately after creation
+- ❌ When the variable doesn't add clarity or context
+- ❌ When it's just passing a value through without transformation
+
+---
+
+**Notes:**
+- Always use responders for response mapping - never map entities to DTOs directly in actions
+- Responders should be pure transformation functions with no side effects
+- Keep business logic in transaction scripts, not in responders
+- Responders are part of the application layer and depend on domain entities
+- Prefer functional programming style: avoid unnecessary intermediate variables, compose operations directly
+- Never use `as` type assertions or `any` types - maintain type safety throughout the codebase
+- **App Services must only use domain services** - never repositories or aggregators directly
+- **Domain Services can use transaction scripts and aggregators** - but never repositories directly
+- **Transaction Scripts are the only layer that uses repositories** - enforcing proper separation of concerns

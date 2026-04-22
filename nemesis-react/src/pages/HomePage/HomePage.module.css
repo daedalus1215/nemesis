@@ -1,0 +1,302 @@
+.homePage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--color-background);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--color-secondary-dark) 0%, var(--color-secondary) 100%);
+  color: var(--color-text-primary);
+  padding: 60px 20px 40px;
+  border-radius: 0 0 30px 30px;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 40px 16px 30px;
+    border-radius: 0 0 20px 20px;
+  }
+}
+
+.userGreeting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--color-text-primary);
+}
+
+.greeting {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.balanceSection {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.balanceLabel {
+  font-size: 16px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.balanceAmount {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 480px) {
+  .balanceAmount {
+    font-size: 36px;
+  }
+}
+
+.lastUpdated {
+  font-size: 14px;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin: 0 20px;
+}
+
+@media (max-width: 480px) {
+  .actionButtons {
+    margin: 0 16px;
+    gap: 8px;
+  }
+}
+
+.actionButton {
+  flex: 1;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-divider);
+  padding: 16px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  min-height: 48px;
+  /* Minimum touch target */
+}
+
+@media (max-width: 480px) {
+  .actionButton {
+    padding: 14px 16px;
+    font-size: 14px;
+    gap: 6px;
+  }
+}
+
+.actionButton:hover {
+  background: var(--color-secondary-dark);
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.content {
+  flex: 1;
+  padding: 20px 20px 90px 20px;
+  /* Bottom padding for navigation */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 16px 16px 90px 16px;
+  }
+}
+
+
+
+.balanceAfter {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--color-text-secondary);
+}
+
+
+
+.loadMoreButton {
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.loadMoreButton:hover:not(:disabled) {
+  background: var(--color-primary-light);
+  transform: translateY(-1px);
+}
+
+.loadMoreButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 480px) {
+  .loadMoreButton {
+    padding: 10px 20px;
+    font-size: 13px;
+    min-width: 100px;
+  }
+}
+
+/* Accounts Section */
+.accountsSection {
+  margin-top: 20px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  padding: 0 20px;
+}
+
+.accountsLoading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-secondary);
+}
+
+.accountsList {
+  padding: 0 20px;
+}
+
+.accountCard {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.accountCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.accountHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.accountName {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 16px;
+}
+
+.defaultBadge {
+  background-color: var(--color-success);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.accountDetails {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.accountType {
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.accountDate {
+  font-size: 13px;
+}
+
+.addAccountButton,
+.createAccountButton {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 12px;
+}
+
+.addAccountButton:hover,
+.createAccountButton:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.noAccounts {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.noAccounts p {
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}

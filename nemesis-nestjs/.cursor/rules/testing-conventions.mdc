@@ -1,0 +1,124 @@
+---
+description: Testing conventions and patterns for unit tests
+globs: 
+  - "**/__specs__/**/*.spec.ts"
+  - "**/*.spec.ts"
+alwaysApply: true
+---
+
+# Testing Conventions
+
+## 1. Test Structure: Given/When/Then Pattern
+
+All unit tests must follow the **Given/When/Then** pattern using explicit section comments:
+
+- `// Arrange` - Set up test data, mocks, and preconditions (Given)
+- `// Act` - Execute the code under test (When)
+- `// Assert` - Verify the results and behavior (Then)
+
+For error cases where the action itself is the assertion, use:
+- `// Act & Assert` - Combined section when testing error conditions
+
+## 2. Test Organization
+
+- All tests should be in `__specs__` folder next to the target file
+- Test file naming: `<target-file-name>.spec.ts`
+- SUT (System Under Test) must be named `target`
+- Use `describe` blocks to group related tests
+- Use descriptive `it` statements that explain the behavior being tested
+
+## 3. Test Structure Example
+
+```typescript
+describe('CreateInvoiceTransactionScript', () => {
+  let target: CreateInvoiceTransactionScript;
+  let repository: jest.Mocked<Repository>;
+
+  beforeEach(async () => {
+    // Setup test module
+  });
+
+  describe('execute', () => {
+    it('should create an invoice successfully', async () => {
+      // Arrange
+      const dto = createValidDto();
+      repository.create.mockResolvedValue(mockInvoice);
+
+      // Act
+      const result = await target.execute(dto, userId);
+
+      // Assert
+      expect(result).toEqual(mockInvoice);
+      expect(repository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ ... })
+      );
+    });
+
+    it('should throw error when validation fails', async () => {
+      // Arrange
+      const dto = createInvalidDto();
+
+      // Act & Assert
+      await expect(target.execute(dto, userId)).rejects.toThrow(
+        'Error message'
+      );
+      expect(repository.create).not.toHaveBeenCalled();
+    });
+  });
+});
+```
+
+## 4. Comments Rules
+
+**Only these comments are allowed in tests:**
+- `// Arrange`
+- `// Act`
+- `// Assert`
+- `// Act & Assert` (for error test cases)
+
+**No other comments should be present in test files** (no explanatory comments, TODOs, etc.)
+
+## 5. Mocking Best Practices
+
+- Use helper functions to create test data (e.g., `createValidDto(overrides?)`)
+- Use `mockImplementation` when you need to return input-based results
+- Use `mockResolvedValue` when you have a fixed return value
+- Prefer `expect.objectContaining()` for partial assertions
+- Minimize direct access to `mock.calls[0][0]` - use matchers when possible
+
+## 6. Test Data Builders
+
+Create helper functions for building test data:
+- Accept optional overrides: `createValidDto(overrides?: Partial<Dto>)`
+- Use spread operator to merge defaults with overrides
+- Keep test data creation DRY and reusable
+
+## 7. Assertions
+
+- Use descriptive matchers: `expect.objectContaining()`, `expect.any()`, etc.
+- Group related assertions logically
+- Verify both the result and side effects (e.g., repository calls)
+
+## 8. Type Safety
+
+**Never use type assertions or `any` types in tests:**
+- ❌ Do NOT use `as any`, `as Type`, or type assertions
+- ❌ Do NOT use `any` type annotations
+- ✅ Use proper types and mocks
+- ✅ If you need to test edge cases, create proper mock objects that conform to the types
+- ✅ Use TypeScript's type system to ensure test data is correct
+
+**Rationale:**
+- Type assertions bypass TypeScript's type checking
+- Using `any` defeats the purpose of type safety
+- Tests should catch type errors, not hide them
+- If a scenario requires invalid types, the code itself should be redesigned, not the test
+
+---
+
+**Note:**
+- Follow Given/When/Then structure consistently
+- Only use the specified comment format
+- Keep tests focused and readable
+- Each test should verify one specific behavior
+- Never use `as` or `any` in tests - maintain type safety

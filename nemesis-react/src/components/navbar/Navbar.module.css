@@ -1,0 +1,22 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    /* background-color: #f4f4f4; */
+    /* border-bottom: 1px solid #ddd; */
+  }
+  
+  .logo {
+    height: 40px;
+    width: 40px;
+    margin-right: 8px; /* Reduced margin for tighter alignment */
+    cursor: pointer;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f0; /* Bright green */
+    margin: 0; /* Ensure no extra margin from default styles */
+  }
+  

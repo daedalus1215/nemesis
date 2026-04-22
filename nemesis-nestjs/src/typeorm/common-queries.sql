@@ -1,0 +1,1 @@
+select * FROM payment_applications;

@@ -1,0 +1,12 @@
+npm run lint
+npm run build
+npm test
+echo "🔍 Running dependency-cruiser to validate architecture..."
+npm run depcruise
+if [ $? -ne 0 ]; then
+  echo "❌ Dependency violations found! Please fix them before pushing."
+  exit 1
+fi
+
+echo "✅ All dependency checks passed!"
+

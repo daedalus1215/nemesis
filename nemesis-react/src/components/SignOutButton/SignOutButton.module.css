@@ -1,0 +1,20 @@
+.signOutButton {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.signOutButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.signOutButton:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+

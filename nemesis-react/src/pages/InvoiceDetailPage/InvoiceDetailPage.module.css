@@ -1,0 +1,405 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--color-background);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--color-secondary-dark) 0%, var(--color-secondary) 100%);
+  color: var(--color-text-primary);
+  padding: 20px;
+  border-radius: 0 0 30px 30px;
+  height: 8vh;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 16px;
+    border-radius: 0 0 20px 20px;
+  }
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 0px 10px 0px;
+  padding: 0px;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+.pageTitle {
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+}
+
+.titleText {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0px;
+  padding: 0px;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin: 0px;
+  padding: 0px;
+}
+
+
+.defaultBadge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin: 0 20px;
+}
+
+@media (max-width: 480px) {
+  .actionButtons {
+    margin: 0 16px;
+    gap: 8px;
+    margin: auto;
+  }
+}
+
+.actionButton {
+  flex: 1;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-divider);
+  padding: 16px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  min-height: 48px;
+}
+
+@media (max-width: 480px) {
+  .actionButton {
+    /* padding: 14px 16px; */
+    font-size: 14px;
+    gap: 6px;
+    max-width: 200px;
+    width: 100%;
+  }
+}
+
+.actionButton:hover {
+  background: var(--color-secondary-dark);
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+/* HEADER  END */
+.content {
+  flex: 1;
+  padding: 20px 20px 90px 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 16px 16px 90px 16px;
+  }
+}
+
+.centerContent {
+  max-width: 500px;
+  margin: auto;
+  width: 100%;
+}
+
+.invoiceCard {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px var(--color-shadow);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--color-text-secondary);
+}
+
+.successMessage {
+  background-color: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #16a34a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.errorMessage {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.invoiceHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.amountDisplay {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .amountDisplay {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+}
+
+.statusBadge {
+  display: flex;
+  justify-content: center;
+}
+
+.status {
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.statusDraft {
+  background-color: rgba(156, 163, 175, 0.2);
+  color: rgb(107, 114, 128);
+}
+
+.statusSent {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: rgb(37, 99, 235);
+}
+
+.statusPaid {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: rgb(22, 163, 74);
+}
+
+.statusOverdue {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: rgb(220, 38, 38);
+}
+
+.statusCancelled {
+  background-color: rgba(156, 163, 175, 0.2);
+  color: rgb(107, 114, 128);
+}
+
+.invoiceDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.invoiceDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.invoiceDetail:last-of-type {
+  border-bottom: none;
+}
+
+.detailLabel {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.detailValue {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 16px;
+  text-align: right;
+}
+
+.detailValue.balanceDue {
+  font-size: 18px;
+  color: var(--color-primary);
+}
+
+.paymentSection {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid var(--color-border);
+}
+
+.paymentInfo {
+  background-color: var(--color-background);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--color-border);
+}
+
+.paymentInfoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.paymentInfoRow:last-child {
+  margin-bottom: 0;
+}
+
+.paymentInfoLabel {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.paymentInfoValue {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.payButton {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 16px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  min-height: 48px;
+}
+
+.payButton:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.payButton:disabled {
+  background-color: var(--color-text-secondary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px var(--color-shadow);
+}
+
+.cannotPayMessage {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.cancelSection {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid var(--color-border);
+}
+
+.cancelButton {
+  width: 100%;
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: 25px;
+  padding: 16px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgb(220, 38, 38);
+  color: rgb(220, 38, 38);
+  transform: translateY(-1px);
+}
+
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 480px) {
+  .invoiceCard {
+    padding: 20px;
+  }
+
+  .payButton {
+    padding: 14px 20px;
+    font-size: 14px;
+  }
+}
+

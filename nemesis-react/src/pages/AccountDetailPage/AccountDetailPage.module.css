@@ -1,0 +1,140 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  background-color: var(--color-background);
+  /* overflow: scroll; */
+}
+
+.header {
+  background: linear-gradient(135deg, var(--color-secondary-dark) 0%, var(--color-secondary) 100%);
+  color: var(--color-text-primary);
+  padding: 20px;
+  border-radius: 0 0 30px 30px;
+  height: 16vh;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 16px;
+    border-radius: 0 0 20px 20px;
+  }
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 0px 10px 0px;
+  padding: 0px;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+.pageTitle {
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+}
+
+.titleText {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0px;
+  padding: 0px;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin: 0px;
+  padding: 0px;
+}
+
+
+.defaultBadge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin: 0 20px;
+}
+
+@media (max-width: 480px) {
+  .actionButtons {
+    margin: 0 16px;
+    gap: 8px;
+    margin: auto;
+  }
+}
+
+.actionButton {
+  flex: 1;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-divider);
+  padding: 16px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  min-height: 48px;
+}
+
+@media (max-width: 480px) {
+  .actionButton {
+    /* padding: 14px 16px; */
+    font-size: 14px;
+    gap: 6px;
+    max-width: 200px;
+    width: 100%;
+  }
+}
+
+.actionButton:hover {
+  background: var(--color-secondary-dark);
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+/* HEADER  END */
+
+.content {
+  background-color: var(--color-background);
+  border-radius: 25px 25px 0 0;
+  padding: 25px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
