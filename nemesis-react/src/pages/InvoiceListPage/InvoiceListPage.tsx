@@ -102,6 +102,9 @@ export const InvoicePage: React.FC = () => {
           <button className={styles.actionButton} onClick={handleSendInvoice}>
             + Send Invoice
           </button>
+          <button className={styles.actionButton} onClick={() => navigate("/recurring-invoices")}>
+            ↻ Recurring
+          </button>
         </div>
       </div>
 

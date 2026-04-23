@@ -19,6 +19,9 @@ import { AccountDetailPage } from "./pages/AccountDetailPage/AccountDetailPage";
 import { SendInvoicePage } from "./pages/SendInvoicePage/SendInvoicePage";
 import { InvoicePage } from "./pages/InvoiceListPage/InvoiceListPage";
 import { InvoiceDetailPage } from "./pages/InvoiceDetailPage/InvoiceDetailPage";
+import { RecurringInvoiceListPage } from "./pages/RecurringInvoiceListPage/RecurringInvoiceListPage";
+import { CreateRecurringInvoicePage } from "./pages/CreateRecurringInvoicePage/CreateRecurringInvoicePage";
+import { RecurringInvoiceDetailPage } from "./pages/RecurringInvoiceDetailPage/RecurringInvoiceDetailPage";
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -39,6 +42,9 @@ function AppRoutes() {
           <Route path="/invoices" element={<InvoicePage />} />
           <Route path="/invoices/send" element={<SendInvoicePage />} />
           <Route path="/invoices/:invoiceId" element={<InvoiceDetailPage />} />
+          <Route path="/recurring-invoices" element={<RecurringInvoiceListPage />} />
+          <Route path="/recurring-invoices/create" element={<CreateRecurringInvoicePage />} />
+          <Route path="/recurring-invoices/:id" element={<RecurringInvoiceDetailPage />} />
         </Routes>
       </>
     );
