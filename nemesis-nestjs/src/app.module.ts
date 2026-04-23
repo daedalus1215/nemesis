@@ -7,6 +7,7 @@ import { LedgerModule } from './ledger/ledger.module';
 import { AccountsModule } from './ledger/accounts/accounts.module';
 import { PaymentsModule } from './payments/payment.module';
 import { InvoicesModule } from './invoices/invoices.module';
+import { RecurringInvoicesModule } from './recurring-invoices/recurring-invoices.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -20,6 +21,7 @@ import * as Joi from 'joi';
         COOKIE_KEY: Joi.string().required(),
         NODE_ENV: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.string().required(),
+        ALLOW_RECURRING_INVOICE_DEBUG: Joi.string().optional(),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -38,6 +40,7 @@ import * as Joi from 'joi';
     PaymentsModule,
     LedgerModule,
     InvoicesModule,
+    RecurringInvoicesModule,
     AuthModule,
   ],
   controllers: [],
