@@ -6,6 +6,14 @@ import { env } from './vite.env.config'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // esbuild 0.28+ (pinned via overrides for GHSA-gv7w-rqvm-qjhr) refuses to
+  // lower some destructuring to the old es2020 default. build.target below
+  // covers `vite build`; this covers the dev-server dependency pre-bundling.
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2022',
+    },
+  },
   plugins: [
     react(),
     VitePWA({

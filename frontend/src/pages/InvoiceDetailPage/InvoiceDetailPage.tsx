@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import { useAuth } from "../../auth/useAuth";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import { useFetchInvoiceById } from "./useFetchInvoiceById";
@@ -28,19 +27,35 @@ export const InvoiceDetailPage: React.FC = () => {
   }
 
   if (!invoiceId) {
-    return <ErrorMessage message="Invalid invoice ID" />;
+    return (
+      <AppShell selected="Invoices" title="Invoice">
+        <ErrorMessage message="Invalid invoice ID" />
+      </AppShell>
+    );
   }
 
   if (invoiceLoading) {
-    return <div className={styles.loading}>Loading invoice details...</div>;
+    return (
+      <AppShell selected="Invoices" title="Invoice">
+        <div className={styles.loading}>Loading invoice details...</div>
+      </AppShell>
+    );
   }
 
   if (invoiceError) {
-    return <ErrorMessage message={`Error loading invoice: ${invoiceError}`} />;
+    return (
+      <AppShell selected="Invoices" title="Invoice">
+        <ErrorMessage message={`Error loading invoice: ${invoiceError}`} />
+      </AppShell>
+    );
   }
 
   if (!invoice) {
-    return <ErrorMessage message="Invoice not found" />;
+    return (
+      <AppShell selected="Invoices" title="Invoice">
+        <ErrorMessage message="Invoice not found" />
+      </AppShell>
+    );
   }
 
   const isDebtor = invoice.debtorUserId === user.id;
@@ -132,25 +147,18 @@ export const InvoiceDetailPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.navigation}>
-          <button className={styles.backButton} onClick={handleBack}>
-            ← Back
-          </button>
-          <div className={styles.pageTitle}>
-          <div className={styles.titleText}>Invoice #{invoice.id}</div>
-          <div className={styles.subtitle}>
-            {isIssuer ? "You issued this invoice" : "You owe this invoice"}
-          </div>
-        </div>
-          <SignOutButton />
+    <AppShell selected="Invoices" title="Invoice">
+      <div className={styles.topRow}>
+        <button className={styles.backButton} onClick={handleBack}>
+          ← Back
+        </button>
+        <div className={styles.subtitle}>
+          {isIssuer ? "You issued this invoice" : "You owe this invoice"}
         </div>
       </div>
 
-      <div className={styles.content}>
-        <div className={styles.centerContent}>
-          <div className={styles.invoiceCard}>
+      <div className={styles.centerContent}>
+        <div className={styles.invoiceCard}>
             {success && (
               <div className={styles.successMessage}>
                 {success}
@@ -267,12 +275,9 @@ export const InvoiceDetailPage: React.FC = () => {
                 </button>
               </div>
             )}
-          </div>
         </div>
       </div>
-
-      <BottomNavigation selected="Invoices" />
-    </div>
+    </AppShell>
   );
 };
 

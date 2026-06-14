@@ -3,11 +3,10 @@ import { useAuth } from "../../auth/useAuth";
 import { useUserProfile } from "./useUserProfile";
 import { useFetchAccounts } from "./useFetchAccounts";
 import { useAccountBalance } from "./useAccountBalance";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { useNavigate } from "react-router-dom";
 import styles from "./AccountTransferPage.module.css";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import api from "../../api/axios.interceptor";
 
 export const AccountTransferPage: React.FC = () => {
@@ -154,15 +153,27 @@ export const AccountTransferPage: React.FC = () => {
   };
 
   if (profileLoading || accountsLoading) {
-    return <div className={styles.loading}>Loading...</div>;
+    return (
+      <AppShell selected="Transfer" title="Transfer">
+        <div className={styles.loading}>Loading...</div>
+      </AppShell>
+    );
   }
 
   if (profileError) {
-    return <ErrorMessage message={`Error loading profile: ${profileError}`} />;
+    return (
+      <AppShell selected="Transfer" title="Transfer">
+        <ErrorMessage message={`Error loading profile: ${profileError}`} />
+      </AppShell>
+    );
   }
 
   if (accountsError) {
-    return <ErrorMessage message={`Error loading accounts: ${accountsError}`} />;
+    return (
+      <AppShell selected="Transfer" title="Transfer">
+        <ErrorMessage message={`Error loading accounts: ${accountsError}`} />
+      </AppShell>
+    );
   }
 
   if (!userDetails) {
@@ -170,27 +181,15 @@ export const AccountTransferPage: React.FC = () => {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.navigation}>
-          <button className={styles.backButton} onClick={() => navigate("/accounts")}>
-            ← Back
-          </button>
-          <div className={styles.pageTitle}>
-          <div className={styles.titleText}>Internal Transfer</div>
-          <div className={styles.subtitle}>
-            Transfer funds between accounts
-          </div>
+    <AppShell selected="Transfer" title="Transfer">
+      <div className={styles.centerContent}>
+        <div className={styles.intro}>
+          <h2 className={styles.titleText}>Internal Transfer</h2>
+          <p className={styles.subtitle}>Transfer funds between accounts</p>
         </div>
-          <SignOutButton />
-        </div>
-      </div>
 
-
-      <div className={styles.content}>
-        <div className={styles.centerContent}>
-          <div className={styles.transferCard}>
-            {success && (
+        <div className={styles.transferCard}>
+          {success && (
               <div className={styles.successMessage}>
                 {success}
               </div>
@@ -329,11 +328,8 @@ export const AccountTransferPage: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
         </div>
       </div>
-
-      <BottomNavigation selected="Transfer" />
-    </div>
+    </AppShell>
   );
 };

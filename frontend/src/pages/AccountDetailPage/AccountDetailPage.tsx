@@ -1,10 +1,9 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAccountDetail } from "../../hooks/useAccountDetail";
 import { useAccountBalance } from "../../hooks/useAccountBalance";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import api from "../../api/axios.interceptor";
 import styles from "./AccountDetailPage.module.css";
 import { TransactionHistorySection } from "./TransactionHistorySection/TransactionHistorySection";
@@ -13,7 +12,6 @@ export const AccountDetailPage: React.FC = () => {
   const { accountId: id } = useParams<{ accountId: string }>();
   const navigate = useNavigate();
   const accountId = parseInt(id || "0");
-  const contentRef = useRef<HTMLDivElement>(null);
 
   const {
     account,
@@ -61,33 +59,51 @@ export const AccountDetailPage: React.FC = () => {
   };
 
   if (accountLoading) {
-    return <div className={styles.loading}>Loading account details...</div>;
+    return (
+      <AppShell selected="Accounts" title="Account">
+        <div className={styles.loading}>Loading account details...</div>
+      </AppShell>
+    );
   }
 
   if (accountError) {
-    return <ErrorMessage message={`Error loading account: ${accountError}`} />;
+    return (
+      <AppShell selected="Accounts" title="Account">
+        <ErrorMessage message={`Error loading account: ${accountError}`} />
+      </AppShell>
+    );
   }
 
   if (!account) {
-    return <ErrorMessage message="Account not found" />;
+    return (
+      <AppShell selected="Accounts" title="Account">
+        <ErrorMessage message="Account not found" />
+      </AppShell>
+    );
   }
 
   return (
-    <div className={styles.page}>
-      <div className={`${styles.header}`}>
-        <div className={styles.navigation}>
-          <button className={styles.backButton} onClick={handleBack}>
-            ← Back
-          </button>
-          <div className={styles.pageTitle}>
-              <div className={styles.titleText}>{account.name} - {account.accountType}</div>
-              <span className={styles.subtitle}>            {balanceLoading
-                  ? "Loading..."
-                  : balanceError
-                  ? "Error"
-                  : formatCurrency(balance || 0)}</span>
-            </div>
-          <SignOutButton />
+    <AppShell selected="Accounts" title="Account">
+      <button className={styles.backLink} onClick={handleBack}>
+        ← Back to accounts
+      </button>
+
+      <section className={styles.summaryCard}>
+        <div className={styles.summaryTop}>
+          <div>
+            <div className={styles.accountName}>{account.name}</div>
+            <div className={styles.accountType}>{account.accountType}</div>
+          </div>
+          {account.isDefault && (
+            <span className={styles.defaultBadge}>Default</span>
+          )}
+        </div>
+        <div className={styles.balanceAmount}>
+          {balanceLoading
+            ? "Loading..."
+            : balanceError
+              ? "Error"
+              : formatCurrency(balance || 0)}
         </div>
         <div className={styles.actionButtons}>
           <button className={styles.actionButton} onClick={handleSendMoney}>
@@ -102,13 +118,11 @@ export const AccountDetailPage: React.FC = () => {
             </button>
           )}
         </div>
-      </div>
+      </section>
 
-      <div className={styles.content} ref={contentRef}>
-        <TransactionHistorySection key={account.id} account={account} scrollContainerRef={contentRef} />
+      <div className={styles.content}>
+        <TransactionHistorySection key={account.id} account={account} />
       </div>
-
-      <BottomNavigation selected="Accounts" />
-    </div>
+    </AppShell>
   );
 };

@@ -1,9 +1,10 @@
 .landingPage {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  background-color: #000;
-  color: #fff;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
   overflow: hidden;
 }

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import { useFetchRecurringInvoiceById } from "./useFetchRecurringInvoiceById";
 import api from "../../api/axios.interceptor";
@@ -35,10 +34,30 @@ export const RecurringInvoiceDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  if (!id) return <ErrorMessage message="Invalid recurring invoice ID" />;
-  if (riLoading) return <div className={styles.loading}>Loading...</div>;
-  if (riError) return <ErrorMessage message={`Error: ${riError}`} />;
-  if (!ri) return <ErrorMessage message="Recurring invoice not found" />;
+  if (!id)
+    return (
+      <AppShell selected="Invoices" title="Recurring Invoice">
+        <ErrorMessage message="Invalid recurring invoice ID" />
+      </AppShell>
+    );
+  if (riLoading)
+    return (
+      <AppShell selected="Invoices" title="Recurring Invoice">
+        <div className={styles.loading}>Loading...</div>
+      </AppShell>
+    );
+  if (riError)
+    return (
+      <AppShell selected="Invoices" title="Recurring Invoice">
+        <ErrorMessage message={`Error: ${riError}`} />
+      </AppShell>
+    );
+  if (!ri)
+    return (
+      <AppShell selected="Invoices" title="Recurring Invoice">
+        <ErrorMessage message="Recurring invoice not found" />
+      </AppShell>
+    );
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
@@ -93,24 +112,20 @@ export const RecurringInvoiceDetailPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.navigation}>
-          <button className={styles.backButton} onClick={() => navigate("/recurring-invoices")}>
+    <AppShell selected="Invoices" title="Recurring Invoice">
+      <div className={styles.centerContent}>
+        <div className={styles.detailHeader}>
+          <button
+            className={styles.backButton}
+            onClick={() => navigate("/recurring-invoices")}
+          >
             ← Back
           </button>
-          <div className={styles.pageTitle}>
-            <div className={styles.titleText}>{ri.recurringInvoiceId}</div>
-            <div className={styles.subtitle}>Recurring invoice details</div>
-          </div>
-          <SignOutButton />
+          <div className={styles.detailId}>{ri.recurringInvoiceId}</div>
         </div>
-      </div>
 
-      <div className={styles.content}>
-        <div className={styles.centerContent}>
-          <div className={styles.card}>
-            {success && <div className={styles.successMessage}>{success}</div>}
+        <div className={styles.card}>
+          {success && <div className={styles.successMessage}>{success}</div>}
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <div className={styles.cardHeader}>
@@ -199,16 +214,13 @@ export const RecurringInvoiceDetailPage: React.FC = () => {
               )}
             </div>
 
-            {ri.status === "CANCELLED" && (
-              <div className={styles.infoMessage}>
-                This recurring invoice has been cancelled and will no longer generate invoices.
-              </div>
-            )}
-          </div>
+          {ri.status === "CANCELLED" && (
+            <div className={styles.infoMessage}>
+              This recurring invoice has been cancelled and will no longer generate invoices.
+            </div>
+          )}
         </div>
       </div>
-
-      <BottomNavigation selected="Invoices" />
-    </div>
+    </AppShell>
   );
 };

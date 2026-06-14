@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { useAuth } from "../../auth/useAuth";
 import { useNavigate } from "react-router-dom";
 import { MoneyDialPad } from "../MoneyPage/components/MoneyDialPad";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 import api from "../../api/axios.interceptor";
@@ -145,8 +144,18 @@ export const CreateRecurringInvoicePage: React.FC = () => {
     }
   };
 
-  if (usersLoading) return <div className={styles.loading}>Loading...</div>;
-  if (usersError) return <ErrorMessage message={`Error loading users: ${usersError}`} />;
+  if (usersLoading)
+    return (
+      <AppShell selected="Invoices" title="New Recurring Invoice">
+        <div className={styles.loading}>Loading...</div>
+      </AppShell>
+    );
+  if (usersError)
+    return (
+      <AppShell selected="Invoices" title="New Recurring Invoice">
+        <ErrorMessage message={`Error loading users: ${usersError}`} />
+      </AppShell>
+    );
 
   const showDayOfWeek = formData.intervalType === "week";
   const showDayOfMonth =
@@ -155,28 +164,20 @@ export const CreateRecurringInvoicePage: React.FC = () => {
     formData.debtorUserId && amount && parseFloat(amount) > 0 && formData.intervalType;
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.navigation}>
+    <AppShell selected="Invoices" title="New Recurring Invoice">
+      <div className={styles.centerContent}>
+        <div className={styles.formHeader}>
           <button
             className={styles.backButton}
             onClick={() => navigate("/recurring-invoices")}
           >
             ← Back
           </button>
-          <SignOutButton />
+          <p className={styles.subtitle}>Set up automated invoice scheduling</p>
         </div>
 
-        <div className={styles.pageTitle}>
-          <div className={styles.titleText}>New Recurring Invoice</div>
-          <div className={styles.subtitle}>Set up automated invoice scheduling</div>
-        </div>
-      </div>
-
-      <div className={styles.content}>
-        <div className={styles.centerContent}>
-          <div className={styles.formCard}>
-            {success && <div className={styles.successMessage}>{success}</div>}
+        <div className={styles.formCard}>
+          {success && <div className={styles.successMessage}>{success}</div>}
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <div className={styles.amountDisplay}>{getDisplayAmount(amount)}</div>
@@ -368,11 +369,8 @@ export const CreateRecurringInvoicePage: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
         </div>
       </div>
-
-      <BottomNavigation selected="Invoices" />
-    </div>
+    </AppShell>
   );
 };

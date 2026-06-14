@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { useAuth } from "../../auth/useAuth";
 import { useNavigate } from "react-router-dom";
 import { MoneyDialPad } from "./components/MoneyDialPad";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 import api from "../../api/axios.interceptor";
@@ -107,34 +106,26 @@ export const MoneyPage: React.FC = () => {
   };
 
   if (usersLoading) {
-    return <div className={styles.loading}>Loading...</div>;
+    return (
+      <AppShell selected="Send" title="Send Money">
+        <div className={styles.loading}>Loading...</div>
+      </AppShell>
+    );
   }
 
   if (usersError) {
-    return <ErrorMessage message={`Error loading users: ${usersError}`} />;
+    return (
+      <AppShell selected="Send" title="Send Money">
+        <ErrorMessage message={`Error loading users: ${usersError}`} />
+      </AppShell>
+    );
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.navigation}>
-          <button className={styles.backButton} onClick={() => navigate("/")}>
-            ← Back
-          </button>
-          <div className={styles.pageTitle}>
-          <div className={styles.titleText}>Money</div>
-          <div className={styles.subtitle}>
-            Send and request money
-          </div>
-        </div>
-          <SignOutButton />
-        </div>
-      </div>
-
-      <div className={styles.content}>
-        <div className={styles.centerContent}>
-          <div className={styles.moneyCard}>
-            {success && (
+    <AppShell selected="Send" title="Send Money">
+      <div className={styles.centerContent}>
+        <div className={styles.moneyCard}>
+          {success && (
               <div className={styles.successMessage}>
                 {success}
               </div>
@@ -205,13 +196,10 @@ export const MoneyPage: React.FC = () => {
                   Cancel
                 </button>
               </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
-
-      <BottomNavigation selected="Send" />
-    </div>
+    </AppShell>
   );
 };
 

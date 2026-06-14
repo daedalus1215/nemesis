@@ -3,11 +3,10 @@ import { useAuth } from "../../auth/useAuth";
 import { useUserProfile } from "./useUserProfile";
 import { useUserBalance } from "./useUserBalance";
 import { useUserAccounts } from "./useUserAccounts";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.css";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import { TransferIcon } from "../../components/icons/TransferIcon";
 
 export const HomePage: React.FC = () => {
@@ -41,13 +40,8 @@ export const HomePage: React.FC = () => {
     });
   };
 
-  const getInitials = (username: string) => {
-    return username ? username.charAt(0).toUpperCase() : "U";
-  };
-
-
   if (profileLoading) {
-    return <div className={styles.loading}>Loading user details...</div>;
+    return <div className={styles.fullPageLoading}>Loading user details...</div>;
   }
 
   if (profileError) {
@@ -59,91 +53,77 @@ export const HomePage: React.FC = () => {
   }
 
   return (
-    <div className={styles.homePage}>
-      <div className={styles.header}>
-        <div className={styles.userGreeting}>
-          <div className={styles.userInfo}>
-            <div className={styles.avatar}>
-              {getInitials(userDetails.username)}
-            </div>
-            <div className={styles.greeting}>
-              Hello, {userDetails.username}
-            </div>
-          </div>
-          <SignOutButton />
+    <AppShell selected="Home" title="Home">
+      <section className={styles.balanceCard}>
+        <div className={styles.balanceLabel}>Total Balance</div>
+        <div className={styles.balanceAmount}>
+          {balanceLoading
+            ? "Loading..."
+            : balanceError
+              ? "Error"
+              : formatCurrency(balance || 0)}
         </div>
-
-        <div className={styles.balanceSection}>
-          <div className={styles.balanceLabel}>Total Balance</div>
-          <div className={styles.balanceAmount}>
-            {balanceLoading ?
-              "Loading..." :
-              balanceError ?
-                "Error" :
-                formatCurrency(balance || 0)
-            }
-          </div>
-          <div className={styles.lastUpdated}>
-            Balance last updated at {formatTime()} ↻
-          </div>
+        <div className={styles.lastUpdated}>
+          Balance last updated at {formatTime()} ↻
         </div>
+        <button className={styles.transferButton} onClick={handleTransferClick}>
+          <TransferIcon />
+          Transfer
+        </button>
+      </section>
 
-        <div className={styles.actionButtons}>
-          <button className={styles.actionButton} onClick={handleTransferClick}>
-            <TransferIcon />
-            Transfer
-          </button>
-        </div>
-      </div>
-
-      <div className={styles.content}>
-        <div className={styles.accountsSection}>
-          <h3 className={styles.sectionTitle}>My Accounts</h3>
-
-          {accountsLoading ? (
-            <div className={styles.accountsLoading}>Loading accounts...</div>
-          ) : accountsError ? (
-            <ErrorMessage message={`Error loading accounts: ${accountsError}`} />
-          ) : accounts && accounts.length > 0 ? (
-            <div className={styles.accountsList}>
-              {accounts.map((account) => (
-                <div key={account.id} className={styles.accountCard}>
-                  <div className={styles.accountHeader}>
-                    <span className={styles.accountName}>{account.name} - {formatCurrency(account.balance)}</span>
-                    {account.isDefault && (
-                      <span className={styles.defaultBadge}>Default</span>
-                    )}
-                  </div>
-                  <div className={styles.accountDetails}>
-                    <span className={styles.accountType}>{account.accountType}</span>
-                    <span className={styles.accountDate}>
-                      Created {new Date(account.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              <button
-                className={styles.addAccountButton}
-                onClick={() => navigate('/accounts')}
-              >
-                View All Accounts
-              </button>
-            </div>
-          ) : (
-            <div className={styles.noAccounts}>
-              <p>No accounts found</p>
-              <button
-                className={styles.createAccountButton}
-                onClick={() => navigate('/accounts/create')}
-              >
-                Create Your First Account
-              </button>
-            </div>
+      <section className={styles.accountsSection}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>My Accounts</h2>
+          {accounts && accounts.length > 0 && (
+            <button className={styles.viewAllLink} onClick={() => navigate('/accounts')}>
+              View all
+            </button>
           )}
         </div>
-      </div>
 
-      <BottomNavigation selected="Home" />
-    </div>
+        {accountsLoading ? (
+          <div className={styles.accountsLoading}>Loading accounts...</div>
+        ) : accountsError ? (
+          <ErrorMessage message={`Error loading accounts: ${accountsError}`} />
+        ) : accounts && accounts.length > 0 ? (
+          <div className={styles.accountsGrid}>
+            {accounts.map((account) => (
+              <button
+                key={account.id}
+                className={styles.accountCard}
+                onClick={() => navigate(`/accounts/detail/${account.id}`)}
+              >
+                <div className={styles.accountHeader}>
+                  <span className={styles.accountName}>{account.name}</span>
+                  {account.isDefault && (
+                    <span className={styles.defaultBadge}>Default</span>
+                  )}
+                </div>
+                <div className={styles.accountBalance}>
+                  {formatCurrency(account.balance)}
+                </div>
+                <div className={styles.accountDetails}>
+                  <span className={styles.accountType}>{account.accountType}</span>
+                  <span className={styles.accountDate}>
+                    Created {new Date(account.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.noAccounts}>
+            <p>No accounts found</p>
+            <button
+              className={styles.createAccountButton}
+              onClick={() => navigate('/accounts/create')}
+            >
+              Create Your First Account
+            </button>
+          </div>
+        )}
+      </section>
+    </AppShell>
   );
 };

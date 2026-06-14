@@ -1,90 +1,71 @@
 .landingContainer {
-    width: 100%;
-    max-width: 400px;
-    padding: 2rem;
-    margin: auto;
-    border-radius: 16px;
-    background-color: #111;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 32px var(--color-shadow);
 }
 
 .content {
-    height: 50%;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    flex-direction: column;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .logo {
-    height: 150px;
+  height: 120px;
+  margin-bottom: 0.5rem;
 }
 
 .actionSection {
-    flex: 9;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
 }
 
 .title {
-    text-align: center;
+  text-align: center;
+  margin: 0;
 }
 
 .buttonGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
 }
 
 .divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #71767b;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-muted);
 }
 
 .divider::before,
 .divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #2f3336;
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .divider span {
-    margin: 0 10px;
+  margin: 0 10px;
 }
 
 .signInSection {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .signInSection p {
-    margin: 0;
-    font-size: 1rem;
-    color: #71767b;
-}
-
-@media (max-width: 768px) {
-    .content {
-        flex-direction: column;
-        gap: 2rem;
-        padding: 1rem;
-    }
-
-    .title {
-        font-size: 2.5rem;
-    }
-
-    .subtitle {
-        font-size: 1.5rem;
-    }
-
-    .buttonGroup {
-        max-width: 100%;
-    }
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-muted);
+  text-align: center;
 }

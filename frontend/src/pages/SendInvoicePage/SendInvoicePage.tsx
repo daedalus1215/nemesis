@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { BottomNavigation } from "../../components/BottomNavigation/BottomNavigation";
+import { AppShell } from "../../components/AppShell/AppShell";
 import { useAuth } from "../../auth/useAuth";
 import { useNavigate } from "react-router-dom";
 import { MoneyDialPad } from "../MoneyPage/components/MoneyDialPad";
-import { SignOutButton } from "../../components/SignOutButton/SignOutButton";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 import api from "../../api/axios.interceptor";
@@ -129,34 +128,32 @@ export const SendInvoicePage: React.FC = () => {
   const today = new Date().toISOString().split('T')[0];
 
   if (usersLoading) {
-    return <div className={styles.loading}>Loading...</div>;
+    return (
+      <AppShell selected="Invoices" title="New Invoice">
+        <div className={styles.loading}>Loading...</div>
+      </AppShell>
+    );
   }
 
   if (usersError) {
-    return <ErrorMessage message={`Error loading users: ${usersError}`} />;
+    return (
+      <AppShell selected="Invoices" title="New Invoice">
+        <ErrorMessage message={`Error loading users: ${usersError}`} />
+      </AppShell>
+    );
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.navigation}>
-          <button className={styles.backButton} onClick={() => navigate("/accounts")}>
-            ← Back
-          </button>
-          <SignOutButton />
-        </div>
-
-        <div className={styles.pageTitle}>
-          <div className={styles.titleText}>Send Invoice</div>
-          <div className={styles.subtitle}>
-            Create and send an invoice
-          </div>
-        </div>
+    <AppShell selected="Invoices" title="New Invoice">
+      <div className={styles.topRow}>
+        <button className={styles.backButton} onClick={() => navigate("/accounts")}>
+          ← Back
+        </button>
+        <div className={styles.subtitle}>Create and send an invoice</div>
       </div>
 
-      <div className={styles.content}>
-        <div className={styles.centerContent}>
-          <div className={styles.invoiceCard}>
+      <div className={styles.centerContent}>
+        <div className={styles.invoiceCard}>
             {success && (
               <div className={styles.successMessage}>
                 {success}
@@ -272,11 +269,8 @@ export const SendInvoicePage: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
         </div>
       </div>
-
-      <BottomNavigation selected="Invoices" />
-    </div>
+    </AppShell>
   );
 };

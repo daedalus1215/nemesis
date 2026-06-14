@@ -32,8 +32,21 @@
   --color-success: #28a745;
   --color-divider: #2f3336;
   --color-muted: #71767b;
-  --color-card: #111;
-  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-card: #1f1f1f;
+  --color-shadow: rgba(0, 0, 0, 0.35);
+
+  /* Elevated surface + the border token pages already reference */
+  --color-surface-2: #2b2b2b;
+  --color-border: #2f3336;
+  --color-sidebar: #141414;
+
+  /* Layout + shape scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+  --sidebar-width: 240px;
+  --topbar-height: 64px;
 }
 
 /* a {
@@ -96,25 +109,10 @@ button {
 }
 
 button:hover {
-  border-color: #646cff;
+  border-color: transparent;
 }
 
-button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }

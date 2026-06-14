@@ -1,202 +1,90 @@
-.page {
+/* ---------- Top row ---------- */
+.topRow {
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: var(--color-background);
-  overflow: hidden;
-}
-
-.header {
-  background: linear-gradient(135deg, var(--color-secondary-dark) 0%, var(--color-secondary) 100%);
-  color: var(--color-text-primary);
-  padding: 20px;
-  border-radius: 0 0 30px 30px;
-  height: 8vh;
-}
-
-@media (max-width: 480px) {
-  .header {
-    padding: 16px;
-    border-radius: 0 0 20px 20px;
-  }
-}
-
-.navigation {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 0px 0px 10px 0px;
-  padding: 0px;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .backButton {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 20px;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease;
 }
 
 .backButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-.pageTitle {
-  text-align: center;
-  margin: 0px;
-  padding: 0px;
-}
-
-.titleText {
-  font-size: 1rem;
-  font-weight: 700;
-  margin: 0px;
-  padding: 0px;
+  border-color: var(--color-primary-dark);
 }
 
 .subtitle {
-  font-size: 0.8rem;
-  opacity: 0.9;
-  margin: 0px;
-  padding: 0px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
 }
 
-
-.defaultBadge {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  backdrop-filter: blur(10px);
-}
-
-.actionButtons {
-  display: flex;
-  gap: 12px;
-  margin: 0 20px;
-}
-
-@media (max-width: 480px) {
-  .actionButtons {
-    margin: 0 16px;
-    gap: 8px;
-    margin: auto;
-  }
-}
-
-.actionButton {
-  flex: 1;
-  background: var(--color-surface);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-divider);
-  padding: 16px 24px;
-  border-radius: 25px;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px var(--color-shadow);
-  min-height: 48px;
-}
-
-@media (max-width: 480px) {
-  .actionButton {
-    /* padding: 14px 16px; */
-    font-size: 14px;
-    gap: 6px;
-    max-width: 200px;
-    width: 100%;
-  }
-}
-
-.actionButton:hover {
-  background: var(--color-secondary-dark);
-  color: var(--color-text-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--color-shadow);
-}
-
-/* HEADER  END */
-.content {
-  flex: 1;
-  padding: 20px 20px 90px 20px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-@media (max-width: 480px) {
-  .content {
-    padding: 16px 16px 90px 16px;
-  }
-}
-
+/* ---------- Card ---------- */
 .centerContent {
-  max-width: 500px;
-  margin: auto;
+  max-width: 520px;
+  margin: 0 auto;
   width: 100%;
 }
 
 .invoiceCard {
-  background: var(--color-surface);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 16px var(--color-shadow);
+  background-color: var(--color-card);
   border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
   display: flex;
   flex-direction: column;
 }
 
 .loading {
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
   color: var(--color-text-secondary);
 }
 
+/* ---------- Messages ---------- */
 .successMessage {
-  background-color: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  color: #16a34a;
+  background-color: rgba(40, 167, 69, 0.12);
+  border: 1px solid var(--color-success);
+  color: var(--color-success);
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin-bottom: 20px;
   font-size: 14px;
   width: 100%;
 }
 
 .errorMessage {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #dc2626;
+  background-color: rgba(239, 68, 68, 0.12);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin-bottom: 20px;
   font-size: 14px;
   width: 100%;
 }
 
+/* ---------- Header ---------- */
 .invoiceHeader {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   padding-bottom: 24px;
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .amountDisplay {
-  font-size: 48px;
+  font-size: 44px;
   font-weight: 700;
   color: var(--color-text-primary);
   margin-bottom: 16px;
@@ -215,52 +103,50 @@
   justify-content: center;
 }
 
+/* ---------- Status badges ---------- */
 .status {
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  color: #fff;
   text-transform: capitalize;
 }
 
 .statusDraft {
-  background-color: rgba(156, 163, 175, 0.2);
-  color: rgb(107, 114, 128);
+  background-color: var(--color-muted);
 }
 
 .statusSent {
-  background-color: rgba(59, 130, 246, 0.2);
-  color: rgb(37, 99, 235);
+  background-color: var(--color-info);
 }
 
 .statusPaid {
-  background-color: rgba(34, 197, 94, 0.2);
-  color: rgb(22, 163, 74);
+  background-color: var(--color-success);
 }
 
 .statusOverdue {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: rgb(220, 38, 38);
+  background-color: var(--color-error);
 }
 
 .statusCancelled {
-  background-color: rgba(156, 163, 175, 0.2);
-  color: rgb(107, 114, 128);
+  background-color: var(--color-muted);
 }
 
+/* ---------- Details ---------- */
 .invoiceDetails {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 
 .invoiceDetail {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .invoiceDetail:last-of-type {
@@ -270,33 +156,34 @@
 .detailLabel {
   font-weight: 500;
   color: var(--color-text-secondary);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .detailValue {
   font-weight: 600;
   color: var(--color-text-primary);
-  font-size: 16px;
+  font-size: 15px;
   text-align: right;
 }
 
 .detailValue.balanceDue {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--color-primary);
 }
 
+/* ---------- Payment section ---------- */
 .paymentSection {
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 2px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
 }
 
 .paymentInfo {
-  background-color: var(--color-background);
-  border-radius: 8px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   padding: 16px;
   margin-bottom: 20px;
-  border: 1px solid var(--color-border);
 }
 
 .paymentInfoRow {
@@ -323,83 +210,70 @@
 .payButton {
   width: 100%;
   background-color: var(--color-primary);
-  color: white;
+  color: #0d0d0d;
   border: none;
-  border-radius: 25px;
-  padding: 16px 24px;
+  border-radius: var(--radius-pill);
+  padding: 12px 24px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px var(--color-shadow);
-  min-height: 48px;
+  transition: background-color 0.2s ease;
 }
 
 .payButton:hover:not(:disabled) {
-  background-color: var(--color-primary-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--color-shadow);
+  background-color: var(--color-primary-light);
 }
 
 .payButton:disabled {
-  background-color: var(--color-text-secondary);
+  background-color: var(--color-surface-2);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
-  transform: none;
-  box-shadow: 0 2px 8px var(--color-shadow);
 }
 
 .cannotPayMessage {
   margin-top: 24px;
   padding: 16px;
-  background-color: var(--color-background);
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   text-align: center;
   color: var(--color-text-secondary);
   font-size: 14px;
 }
 
+/* ---------- Cancel section ---------- */
 .cancelSection {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 2px solid var(--color-border);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
 }
 
 .cancelButton {
   width: 100%;
   background-color: transparent;
-  color: var(--color-text-secondary);
-  border: 2px solid var(--color-border);
-  border-radius: 25px;
-  padding: 16px 24px;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 12px 24px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 48px;
 }
 
 .cancelButton:hover:not(:disabled) {
   background-color: rgba(239, 68, 68, 0.1);
-  border-color: rgb(220, 38, 38);
-  color: rgb(220, 38, 38);
-  transform: translateY(-1px);
+  border-color: var(--color-error);
+  color: var(--color-error);
 }
 
 .cancelButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 @media (max-width: 480px) {
   .invoiceCard {
     padding: 20px;
   }
-
-  .payButton {
-    padding: 14px 20px;
-    font-size: 14px;
-  }
 }
-
