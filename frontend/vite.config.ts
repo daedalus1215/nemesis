@@ -74,6 +74,9 @@ export default defineConfig({
     }
   },
   build: {
+    // esbuild 0.28+ (pinned via overrides for GHSA-gv7w-rqvm-qjhr) errors when
+    // lowering some destructuring to the old es2020 default; es2022 avoids it.
+    target: 'es2022',
     rollupOptions: {
       input: {
         app: resolve(__dirname, 'index.html'),
