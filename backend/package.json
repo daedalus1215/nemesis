@@ -92,7 +92,8 @@
     "jwa": "^2.0.0",
     "js-yaml": "^4.1.1",
     "minimatch": "^9.0.7",
-    "tar": "^7.5.11"
+    "tar": "^7.5.11",
+    "multer": "^2.2.0"
   },
   "jest": {
     "moduleFileExtensions": [
