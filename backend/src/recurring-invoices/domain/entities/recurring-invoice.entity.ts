@@ -81,16 +81,16 @@ export class RecurringInvoice {
   @Index('idx_recurring_created')
   @Column({
     name: 'created_at',
-    type: 'datetime',
+    type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
   @Index('idx_recurring_next_run')
-  @Column({ name: 'next_run', type: 'datetime' })
+  @Column({ name: 'next_run', type: 'timestamptz' })
   nextRun: Date;
 
-  @Column({ name: 'last_run', nullable: true, type: 'datetime' })
+  @Column({ name: 'last_run', nullable: true, type: 'timestamptz' })
   lastRun?: Date;
 
   @Column({ name: 'last_error', nullable: true, type: 'varchar' })

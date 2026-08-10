@@ -9,6 +9,7 @@ import { PaymentsModule } from './payments/payment.module';
 import { InvoicesModule } from './invoices/invoices.module';
 import { RecurringInvoicesModule } from './recurring-invoices/recurring-invoices.module';
 import * as Joi from 'joi';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -16,7 +17,13 @@ import * as Joi from 'joi';
       isGlobal: true,
       envFilePath: ['.env', `.env.${process.env.NODE_ENV}`],
       validationSchema: Joi.object({
-        DATABASE: Joi.string().required(),
+        // Postgres replaces the single DATABASE file path (D5/D21). Validated here so a
+        // missing value fails at boot with a clear message, not at first query.
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.number().default(5432),
+        DB_USER: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         COOKIE_KEY: Joi.string().required(),
         NODE_ENV: Joi.string().required(),
@@ -27,11 +34,22 @@ import * as Joi from 'joi';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        type: 'better-sqlite3',
-        database: configService.get<string>('DATABASE'),
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT') ?? 5432,
+        username: configService.get<string>('DB_USER'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        migrations: [__dirname + '/typeorm/migrations/*{.ts,.js}'],
+        // The container migrates itself on boot. Without this, a fresh Postgres has no
+        // schema and the app starts against nothing.
+        // ⚠️ This also means DEPLOYING IS MIGRATING — see setup/08.
+        migrationsRun: true,
         synchronize: false,
-        logging: true,
+        // `logging: true` logs every query. Fine while developing, unusable in production
+        // where it fills the disk and buries real errors.
+        logging: configService.get<string>('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],
     }),
@@ -43,7 +61,7 @@ import * as Joi from 'joi';
     RecurringInvoicesModule,
     AuthModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [],
 })
 export class AppModule {}
