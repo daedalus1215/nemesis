@@ -27,8 +27,13 @@ export class SystemAccountService implements OnModuleInit {
 
     try {
       // Check if system user exists
+      // ⚠️ Two SQLite-isms had to change for Postgres:
+      //   1. `?` placeholders are SQLite/MySQL. Postgres uses $1, $2, …
+      //   2. `user` is a RESERVED WORD in Postgres and must be quoted as "user".
+      // Neither is caught by the type system or by a migration — they fail at runtime,
+      // as `syntax error at end of input`.
       const existingUser = await queryRunner.query(
-        'SELECT id FROM user WHERE id = ?',
+        'SELECT id FROM "user" WHERE id = $1',
         [SystemAccountService.SYSTEM_USER_ID],
       );
 
@@ -36,8 +41,8 @@ export class SystemAccountService implements OnModuleInit {
         // Create system user
         await queryRunner.query(
           `
-          INSERT INTO user (id, username, password)
-          VALUES (?, ?, ?)
+          INSERT INTO "user" (id, username, password)
+          VALUES ($1, $2, $3)
         `,
           [
             SystemAccountService.SYSTEM_USER_ID,
