@@ -7,7 +7,7 @@ export class LedgerTransaction {
 
   @Column({
     name: 'created_at',
-    type: 'datetime',
+    type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;

@@ -33,8 +33,10 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  // ⚠️ NOT 'api' — that collides with setGlobalPrefix('api') and shadows the whole API.
+  SwaggerModule.setup('docs', app, document);
 
-  await app.listen(3000);
+  // Bind all interfaces explicitly: inside a container, localhost-only is unreachable.
+  await app.listen(3000, '0.0.0.0');
 }
 bootstrap();
