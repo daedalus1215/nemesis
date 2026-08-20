@@ -30,7 +30,7 @@ import * as Joi from 'joi';
         type: 'better-sqlite3',
         database: configService.get<string>('DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false,
+        synchronize: true,
         logging: true,
       }),
       inject: [ConfigService],
