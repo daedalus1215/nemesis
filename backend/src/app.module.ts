@@ -46,7 +46,7 @@ import { HealthController } from './health/health.controller';
         // schema and the app starts against nothing.
         // ⚠️ This also means DEPLOYING IS MIGRATING — see setup/08.
         migrationsRun: true,
-        synchronize: true,
+        synchronize: false,
         // `logging: true` logs every query. Fine while developing, unusable in production
         // where it fills the disk and buries real errors.
         logging: configService.get<string>('NODE_ENV') === 'development',
