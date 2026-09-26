@@ -4,14 +4,14 @@ import { AuthProvider } from "./auth/AuthContext.tsx";
 import { App } from "./App.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { theme } from './context/theme.tsx';
+import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from './context/ThemeContext.tsx';
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
