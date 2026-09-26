@@ -22,6 +22,9 @@ import { PaymentsModule } from '../payments/payment.module';
 import { CancelInvoiceTransactionScript } from './domain/transaction-scripts/cancel-invoice-TS/cancel-invoice.transaction.script';
 import { MarkOverdueInvoicesTransactionScript } from './domain/transaction-scripts/mark-overdue-invoices-TS/mark-overdue-invoices.transaction.script';
 import { OverdueInvoiceScheduler } from './app/cron/overdue-invoice.scheduler';
+import { SendInvoiceTransactionScript } from './domain/transaction-scripts/send-invoice-TS/send-invoice.transaction.script';
+import { SendInvoiceAction } from './app/actions/send-invoice-action/send-invoice.action';
+import { SendInvoiceResponder } from './app/actions/send-invoice-action/send-invoice.responder';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Invoice]), PaymentsModule],
@@ -34,6 +37,7 @@ import { OverdueInvoiceScheduler } from './app/cron/overdue-invoice.scheduler';
     CancelInvoiceTransactionScript,
     MarkOverdueInvoicesTransactionScript,
     OverdueInvoiceScheduler,
+    SendInvoiceTransactionScript,
     InvoiceService,
     InvoiceAppService,
     CreateInvoiceResponder,
@@ -41,6 +45,7 @@ import { OverdueInvoiceScheduler } from './app/cron/overdue-invoice.scheduler';
     FetchInvoiceByIdResponder,
     PayInvoiceResponder,
     CancelInvoiceResponder,
+    SendInvoiceResponder,
   ],
   controllers: [
     CreateInvoiceAction,
@@ -48,6 +53,7 @@ import { OverdueInvoiceScheduler } from './app/cron/overdue-invoice.scheduler';
     FetchInvoiceByIdAction,
     PayInvoiceAction,
     CancelInvoiceAction,
+    SendInvoiceAction,
   ],
   exports: [InvoiceService],
 })
