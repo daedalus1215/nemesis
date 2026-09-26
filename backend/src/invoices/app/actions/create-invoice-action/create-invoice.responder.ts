@@ -16,6 +16,7 @@ export class CreateInvoiceResponder {
       description: requestDto.description,
       dueDate: invoice.dueDate.toISOString().split('T')[0],
       issueDate: invoice.issueDate.toISOString().split('T')[0],
+      status: invoice.status,
       success: true,
     };
   }

@@ -130,6 +130,24 @@ describe('CreateInvoiceTransactionScript', () => {
       );
     });
 
+    it('should set status to DRAFT when send is false', async () => {
+      // Arrange
+      const dto = createValidDto({ send: false });
+      invoiceRepository.create.mockImplementation((invoice) =>
+        Promise.resolve({ ...invoice, id: 1 } as Invoice),
+      );
+
+      // Act
+      await target.execute(dto, issuerUserId);
+
+      // Assert
+      expect(invoiceRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: INVOICE_STATUS.DRAFT,
+        }),
+      );
+    });
+
     it('should handle invoice without description', async () => {
       // Arrange
       const dto = createValidDto({ description: undefined });

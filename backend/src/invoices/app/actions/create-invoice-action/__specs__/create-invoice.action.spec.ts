@@ -31,6 +31,7 @@ describe('CreateInvoiceAction', () => {
     description: 'Test invoice description',
     dueDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
     issueDate: new Date().toISOString().split('T')[0],
+    status: 'sent',
     success: true,
   });
 

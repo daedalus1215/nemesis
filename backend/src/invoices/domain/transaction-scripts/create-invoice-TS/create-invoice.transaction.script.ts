@@ -32,7 +32,7 @@ export class CreateInvoiceTransactionScript {
       debtorUserId: dto.debtorUserId,
       total: dto.amount,
       balanceDue: dto.amount, // Initially, balance due equals total
-      status: INVOICE_STATUS.SENT,
+      status: dto.send === false ? INVOICE_STATUS.DRAFT : INVOICE_STATUS.SENT,
       issueDate,
       dueDate,
       description: dto.description,
