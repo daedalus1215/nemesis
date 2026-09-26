@@ -26,8 +26,8 @@ to create an invoice without sending it, and no way to send one later.
 
 | # | Spec | Depends on | Status |
 |---|------|-----------|--------|
-| 0 | [Backend: draft creation, send action, transition guards](./spec-0-backend-foundation.md) | — | Not started |
-| 1 | [Frontend: save-as-draft, send on detail, pay guard](./spec-1-frontend-draft-ux.md) | Spec 0 | Not started |
+| 0 | [Backend: draft creation, send action, transition guards](./spec-0-backend-foundation.md) | — | Done |
+| 1 | [Frontend: save-as-draft, send on detail, pay guard](./spec-1-frontend-draft-ux.md) | Spec 0 | Done |
 
 ## Shared notes
 
@@ -40,5 +40,5 @@ to create an invoice without sending it, and no way to send one later.
 
 ## Tech stack
 
-- Backend: NestJS + TypeORM + SQLite (action → transaction-script → repository).
+- Backend: NestJS + TypeORM + Postgres (action → transaction-script → repository).
 - Frontend: React + Vite + Material-UI + Axios.

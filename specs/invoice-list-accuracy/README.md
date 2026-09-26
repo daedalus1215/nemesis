@@ -17,6 +17,11 @@ Also found while reviewing: the invoice form lets you pick **today** as the
 due date ("Due date must be today or in the future") while the backend
 rejects anything not strictly in the future — a validation mismatch.
 
+And a fourth, deeper bug found during E2E: **due dates were stored one day
+early** — `new Date("YYYY-MM-DD")` is UTC midnight, which serializes to the
+previous local day's `date` column in timezones behind UTC. See
+[Spec 2](./spec-2-due-date-timezone.md).
+
 ## Decisions (locked)
 
 - **Scope:** fix the status filter only. A text search (by name/description)
@@ -29,13 +34,17 @@ rejects anything not strictly in the future — a validation mismatch.
 - **Sort:** `dueDate DESC, id DESC` — deterministic, newest first on ties.
 - **Due-date validation:** the frontend is aligned to the backend's strict
   rule (today is rejected).
+- **Date unit:** the local calendar day (`'YYYY-MM-DD'`) is the unit of
+  meaning for every due-date comparison — never `Date` arithmetic on
+  date-only values (see Spec 2).
 
 ## Specs
 
 | # | Spec | Depends on | Status |
 |---|------|-----------|--------|
-| 0 | [Overdue cron](./spec-0-overdue-cron.md) | — | Not started |
-| 1 | [Filter semantics, stable sort, due-date validation](./spec-1-filter-semantics-sort.md) | Spec 0 (for the Sent/Pending distinction to be visible) | Not started |
+| 0 | [Overdue cron](./spec-0-overdue-cron.md) | — | Done |
+| 1 | [Filter semantics, stable sort, due-date validation](./spec-1-filter-semantics-sort.md) | Spec 0 (for the Sent/Pending distinction to be visible) | Done |
+| 2 | [Due dates as local calendar days](./spec-2-due-date-timezone.md) | — | Done |
 
 ## Shared notes
 
@@ -47,6 +56,6 @@ rejects anything not strictly in the future — a validation mismatch.
 
 ## Tech stack
 
-- Backend: NestJS + TypeORM + SQLite; `@nestjs/schedule` is already
+- Backend: NestJS + TypeORM + Postgres; `@nestjs/schedule` is already
   registered (see the recurring-invoices module).
 - Frontend: React + Vite.
