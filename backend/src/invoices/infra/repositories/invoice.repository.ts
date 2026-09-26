@@ -73,7 +73,12 @@ export class InvoiceRepository {
     });
   }
 
-  async markOverdue(before: Date): Promise<number> {
+  /**
+   * `before` is a 'YYYY-MM-DD' calendar day (the `date` column's unit);
+   * Postgres coerces the text parameter to `date`, so the comparison is
+   * day-for-day regardless of process/database timezone.
+   */
+  async markOverdue(before: string): Promise<number> {
     const result = await this.repository
       .createQueryBuilder()
       .update(Invoice)

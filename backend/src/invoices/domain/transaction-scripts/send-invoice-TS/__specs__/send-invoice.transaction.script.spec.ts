@@ -122,5 +122,56 @@ describe('SendInvoiceTransactionScript', () => {
       );
       expect(invoiceRepository.update).not.toHaveBeenCalled();
     });
+
+    // The `date` column hydrates as a 'YYYY-MM-DD' string at runtime (the
+    // entity type says Date, but Postgres returns text). Calendar-day
+    // semantics must hold for that shape — a string-vs-Date relational
+    // comparison degrades to NaN and never throws.
+    it('should reject a lapsed draft when dueDate hydrates as a string', async () => {
+      // Arrange
+      const now = new Date();
+      const todayStr = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0'),
+      ].join('-');
+      invoiceRepository.findById.mockResolvedValue(
+        createMockInvoice({
+          id: invoiceId,
+          issuerUserId,
+          status: INVOICE_STATUS.DRAFT,
+          dueDate: todayStr as unknown as Date,
+        }),
+      );
+
+      // Act & Assert
+      await expect(target.execute(invoiceId, issuerUserId)).rejects.toThrow(
+        'Due date has passed',
+      );
+      expect(invoiceRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should send a future-dated draft when dueDate hydrates as a string', async () => {
+      // Arrange
+      const future = new Date();
+      future.setDate(future.getDate() + 1);
+      const futureStr = [
+        future.getFullYear(),
+        String(future.getMonth() + 1).padStart(2, '0'),
+        String(future.getDate()).padStart(2, '0'),
+      ].join('-');
+      invoiceRepository.findById.mockResolvedValue(
+        createMockInvoice({
+          id: invoiceId,
+          issuerUserId,
+          status: INVOICE_STATUS.DRAFT,
+          dueDate: futureStr as unknown as Date,
+        }),
+      );
+
+      // Act & Assert
+      await target.execute(invoiceId, issuerUserId);
+      expect(invoiceRepository.update).toHaveBeenCalledTimes(1);
+    });
   });
 });

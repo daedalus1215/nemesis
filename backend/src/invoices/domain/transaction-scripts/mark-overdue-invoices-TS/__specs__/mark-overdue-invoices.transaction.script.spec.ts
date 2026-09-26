@@ -25,22 +25,26 @@ describe('MarkOverdueInvoicesTransactionScript', () => {
   });
 
   describe('execute', () => {
-    it('should use local midnight as the due-date boundary', async () => {
+    it('should use today\'s local calendar day as the due-date boundary', async () => {
       invoiceRepository.markOverdue.mockResolvedValue(0);
 
       await target.execute();
 
       expect(invoiceRepository.markOverdue).toHaveBeenCalledTimes(1);
+      // The boundary is a 'YYYY-MM-DD' string — today in the *local*
+      // calendar. A Date parameter would carry a timezone offset that
+      // shifts the `date < ?` cutoff by a day.
       const boundary = invoiceRepository.markOverdue.mock
-        .calls[0][0] as Date;
-      expect(boundary.getHours()).toBe(0);
-      expect(boundary.getMinutes()).toBe(0);
-      expect(boundary.getSeconds()).toBe(0);
-      expect(boundary.getMilliseconds()).toBe(0);
-      // The boundary must be today's midnight (not earlier), i.e. within the
-      // last 24 hours from now.
-      expect(boundary.getTime()).toBeGreaterThan(Date.now() - 24 * 60 * 60 * 1000);
-      expect(boundary.getTime()).toBeLessThanOrEqual(Date.now());
+        .calls[0][0] as string;
+      expect(boundary).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      const now = new Date();
+      expect(boundary).toBe(
+        [
+          now.getFullYear(),
+          String(now.getMonth() + 1).padStart(2, '0'),
+          String(now.getDate()).padStart(2, '0'),
+        ].join('-'),
+      );
     });
 
     it('should return the number of flipped invoices', async () => {
