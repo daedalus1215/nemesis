@@ -18,10 +18,10 @@ export const InvoicePage: React.FC = () => {
   const statuses =
     statusFilter === "all"
       ? undefined
-      : statusFilter === "sent"
-      ? ["sent", "overdue"]
       : statusFilter === "pending"
       ? ["sent", "overdue"]
+      : statusFilter === "sent"
+      ? ["sent"]
       : [statusFilter];
 
   const { invoices, loading, error } = useFetchInvoices(statuses);
