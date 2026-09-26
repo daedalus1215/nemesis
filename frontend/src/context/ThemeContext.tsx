@@ -30,7 +30,7 @@ function getInitialMode(): AppThemeMode {
   } catch {
     // Storage unavailable (private mode, blocked) — fall through to default.
   }
-  return 'auto';
+  return 'dark';
 }
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
