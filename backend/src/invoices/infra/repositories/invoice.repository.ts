@@ -73,6 +73,17 @@ export class InvoiceRepository {
     });
   }
 
+  async markOverdue(before: Date): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Invoice)
+      .set({ status: INVOICE_STATUS.OVERDUE })
+      .where('status = :status', { status: INVOICE_STATUS.SENT })
+      .andWhere('dueDate < :before', { before })
+      .execute();
+    return result.affected ?? 0;
+  }
+
   async create(invoice: Partial<Invoice>): Promise<Invoice> {
     const newInvoice = this.repository.create(invoice);
     return this.repository.save(newInvoice);

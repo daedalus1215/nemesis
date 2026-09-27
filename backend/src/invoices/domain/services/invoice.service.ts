@@ -4,6 +4,7 @@ import { FetchInvoicesTransactionScript } from '../transaction-scripts/fetch-inv
 import { GetInvoiceByIdTransactionScript } from '../transaction-scripts/get-invoice-by-id-TS/get-invoice-by-id.transaction.script';
 import { UpdateInvoiceStatusTransactionScript } from '../transaction-scripts/update-invoice-status-TS/update-invoice-status.transaction.script';
 import { CancelInvoiceTransactionScript } from '../transaction-scripts/cancel-invoice-TS/cancel-invoice.transaction.script';
+import { MarkOverdueInvoicesTransactionScript } from '../transaction-scripts/mark-overdue-invoices-TS/mark-overdue-invoices.transaction.script';
 import {
   Invoice,
   InvoiceStatusType,
@@ -20,6 +21,7 @@ export class InvoiceService {
     private readonly getInvoiceByIdTransactionScript: GetInvoiceByIdTransactionScript,
     private readonly updateInvoiceStatusTransactionScript: UpdateInvoiceStatusTransactionScript,
     private readonly cancelInvoiceTransactionScript: CancelInvoiceTransactionScript,
+    private readonly markOverdueInvoicesTransactionScript: MarkOverdueInvoicesTransactionScript,
     private readonly paymentAggregator: PaymentAggregator,
   ) {}
 
@@ -39,6 +41,10 @@ export class InvoiceService {
 
   async getInvoiceById(invoiceId: number): Promise<Invoice | null> {
     return await this.getInvoiceByIdTransactionScript.execute(invoiceId);
+  }
+
+  async markOverdueInvoices(): Promise<number> {
+    return await this.markOverdueInvoicesTransactionScript.execute();
   }
 
   async applyPaymentToInvoice(
