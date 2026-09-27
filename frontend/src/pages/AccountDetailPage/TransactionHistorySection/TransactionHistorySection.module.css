@@ -40,11 +40,11 @@
 }
 
 .incoming {
-    color: #28a745;
+    color: var(--color-success);
 }
 
 .outgoing {
-    color: #dc3545;
+    color: var(--color-error);
 }
 
 .transactionDetails {
@@ -66,8 +66,8 @@
 }
 
 .transactionCategory {
-    background: #e9ecef;
-    color: #495057;
+    background: var(--color-surface-2);
+    color: var(--color-text-secondary);
     padding: 4px 8px;
     border-radius: 8px;
     font-size: 12px;
@@ -77,12 +77,12 @@
 
 .transactionDate {
     font-size: 14px;
-    color: #6c757d;
+    color: var(--color-text-secondary);
 }
 
 .transactionStatus {
     font-size: 14px;
-    color: #6c757d;
+    color: var(--color-text-secondary);
     font-weight: 500;
 }
 
@@ -94,13 +94,13 @@
 .noTransactionsTitle {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-primary);
     margin-bottom: 8px;
 }
 
 .noTransactionsMessage {
     font-size: 14px;
-    color: #666;
+    color: var(--color-text-secondary);
     line-height: 1.5;
 }
 
@@ -108,7 +108,7 @@
     text-align: center;
     padding: 40px 20px;
     font-size: 16px;
-    color: #666;
+    color: var(--color-text-secondary);
 }
 
 .loadingMore {
