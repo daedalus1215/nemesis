@@ -31,6 +31,11 @@ previous local day's `date` column in timezones behind UTC. See
   intent of the code.
 - **Pill semantics:** Pending = `sent` + `overdue` (everything awaiting
   payment — unchanged); **Sent = `sent` only**; Overdue = past due date.
+- **Sent/Received are direction filters (Spec 3, user-confirmed 2026-09-26):**
+  Sent = invoices I issued, except drafts; Received (new pill) = invoices I
+  was sent, except drafts. Supersedes the status-only reading of "Sent" in
+  the pill-semantics decision above — Pending remains "everything awaiting
+  payment" across both directions.
 - **Sort:** `dueDate DESC, id DESC` — deterministic, newest first on ties.
 - **Due-date validation:** the frontend is aligned to the backend's strict
   rule (today is rejected).
@@ -45,6 +50,7 @@ previous local day's `date` column in timezones behind UTC. See
 | 0 | [Overdue cron](./spec-0-overdue-cron.md) | — | Done |
 | 1 | [Filter semantics, stable sort, due-date validation](./spec-1-filter-semantics-sort.md) | Spec 0 (for the Sent/Pending distinction to be visible) | Done |
 | 2 | [Due dates as local calendar days](./spec-2-due-date-timezone.md) | — | Done |
+| 3 | [Sent/Received direction filters](./spec-3-sent-received-direction.md) | — | Pending |
 
 ## Shared notes
 
