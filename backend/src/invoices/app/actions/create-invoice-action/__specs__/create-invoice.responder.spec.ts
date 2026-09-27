@@ -41,6 +41,7 @@ describe('CreateInvoiceResponder', () => {
         description: requestDto.description,
         dueDate: '2024-02-15',
         issueDate: '2024-01-15',
+        status: invoice.status,
         success: true,
       });
     });

@@ -5,5 +5,6 @@ export type CreateInvoiceResponseDto = {
   description?: string;
   dueDate: string;
   issueDate: string;
+  status: string;
   success: boolean;
 };
