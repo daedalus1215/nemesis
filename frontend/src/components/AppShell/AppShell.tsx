@@ -97,6 +97,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             >
               <div className={styles.avatar}>{initials}</div>
             </Link>
+            <div className={styles.avatar}>{initials}</div>
             <SignOutButton />
           </div>
         </header>
