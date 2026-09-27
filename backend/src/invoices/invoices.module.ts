@@ -21,6 +21,7 @@ import { InvoiceAppService } from './app/app-service/invoice.app.service';
 import { PaymentsModule } from '../payments/payment.module';
 import { CancelInvoiceTransactionScript } from './domain/transaction-scripts/cancel-invoice-TS/cancel-invoice.transaction.script';
 import { MarkOverdueInvoicesTransactionScript } from './domain/transaction-scripts/mark-overdue-invoices-TS/mark-overdue-invoices.transaction.script';
+import { OverdueInvoiceScheduler } from './app/cron/overdue-invoice.scheduler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Invoice]), PaymentsModule],
@@ -32,6 +33,7 @@ import { MarkOverdueInvoicesTransactionScript } from './domain/transaction-scrip
     UpdateInvoiceStatusTransactionScript,
     CancelInvoiceTransactionScript,
     MarkOverdueInvoicesTransactionScript,
+    OverdueInvoiceScheduler,
     InvoiceService,
     InvoiceAppService,
     CreateInvoiceResponder,
