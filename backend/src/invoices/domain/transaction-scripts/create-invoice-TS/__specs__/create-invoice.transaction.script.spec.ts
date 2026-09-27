@@ -13,6 +13,13 @@ describe('CreateInvoiceTransactionScript', () => {
   const debtorUserId = 2;
   const amount = 100.5;
 
+  // Local calendar day as 'YYYY-MM-DD' — the unit the `date` column stores.
+  const localDateStr = (d: Date): string =>
+    [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, '0'),
+      String(d.getDate()).padStart(2, '0'),
+    ].join('-');
   const createValidDto = (
     overrides?: Partial<CreateInvoiceRequestDto>,
   ): CreateInvoiceRequestDto => {
@@ -20,7 +27,7 @@ describe('CreateInvoiceTransactionScript', () => {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + 2);
     futureDate.setHours(0, 0, 0, 0);
-    const dueDateString = futureDate.toISOString().split('T')[0];
+    const dueDateString = localDateStr(futureDate);
 
     return {
       debtorUserId,
@@ -130,6 +137,24 @@ describe('CreateInvoiceTransactionScript', () => {
       );
     });
 
+    it('should set status to DRAFT when send is false', async () => {
+      // Arrange
+      const dto = createValidDto({ send: false });
+      invoiceRepository.create.mockImplementation((invoice) =>
+        Promise.resolve({ ...invoice, id: 1 } as Invoice),
+      );
+
+      // Act
+      await target.execute(dto, issuerUserId);
+
+      // Assert
+      expect(invoiceRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: INVOICE_STATUS.DRAFT,
+        }),
+      );
+    });
+
     it('should handle invoice without description', async () => {
       // Arrange
       const dto = createValidDto({ description: undefined });
@@ -149,9 +174,11 @@ describe('CreateInvoiceTransactionScript', () => {
     });
 
     it('should throw error when due date is in the past', async () => {
-      // Arrange
+      const past = new Date();
+      past.setDate(past.getDate() - 1);
+      past.setHours(0, 0, 0, 0);
       const dto = createValidDto({
-        dueDate: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+        dueDate: localDateStr(past),
       });
 
       // Act & Assert
@@ -162,9 +189,10 @@ describe('CreateInvoiceTransactionScript', () => {
     });
 
     it('should throw error when due date is today', async () => {
-      // Arrange
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
       const dto = createValidDto({
-        dueDate: new Date().toISOString().split('T')[0],
+        dueDate: localDateStr(today),
       });
 
       // Act & Assert
@@ -213,6 +241,9 @@ describe('CreateInvoiceTransactionScript', () => {
       expect(dueDate.getMinutes()).toBe(0);
       expect(dueDate.getSeconds()).toBe(0);
       expect(dueDate.getMilliseconds()).toBe(0);
+      // The stored due date must keep the picker's calendar day — a
+      // UTC-midnight parse would shift it a day in timezones behind UTC.
+      expect(localDateStr(dueDate)).toBe(dto.dueDate);
     });
   });
 });

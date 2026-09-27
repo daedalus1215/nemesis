@@ -9,7 +9,10 @@ interface UseInvoicesResult {
   refetch: () => Promise<void>;
 }
 
-export const useFetchInvoices = (statuses?: string[]): UseInvoicesResult => {
+export const useFetchInvoices = (
+  statuses?: string[],
+  direction?: string,
+): UseInvoicesResult => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,9 +25,13 @@ export const useFetchInvoices = (statuses?: string[]): UseInvoicesResult => {
     try {
       setLoading(true);
       setError(null);
-      const params = statusKey !== 'all' 
-        ? { statuses: statusKey }
-        : {};
+      const params: Record<string, string> = {};
+      if (statusKey !== 'all') {
+        params.statuses = statusKey;
+      }
+      if (direction) {
+        params.direction = direction;
+      }
       const response = await api.get('/invoices', { params });
       setInvoices(response.data.invoices);
     } catch (err) {
@@ -32,7 +39,7 @@ export const useFetchInvoices = (statuses?: string[]): UseInvoicesResult => {
     } finally {
       setLoading(false);
     }
-  }, [statusKey]);
+  }, [statusKey, direction]);
 
   useEffect(() => {
     fetchInvoices();

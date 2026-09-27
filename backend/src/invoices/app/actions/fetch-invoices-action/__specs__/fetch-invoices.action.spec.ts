@@ -5,6 +5,7 @@ import { FetchInvoicesResponder } from '../fetch-invoices.responder';
 import {
   Invoice,
   INVOICE_STATUS,
+  INVOICE_DIRECTION,
 } from '../../../../domain/entities/invoice.entity';
 import { FetchInvoicesRequestDto } from '../fetch-invoices.request.dto';
 import { FetchInvoicesResponseDto } from '../fetch-invoices.response.dto';
@@ -67,6 +68,7 @@ describe('FetchInvoicesAction', () => {
       expect(invoiceService.getInvoices).toHaveBeenCalledWith(
         userId,
         undefined,
+        undefined,
       );
       expect(responder.apply).toHaveBeenCalledWith(mockInvoices);
       expect(result).toEqual(mockResponse);
@@ -89,6 +91,29 @@ describe('FetchInvoicesAction', () => {
       expect(invoiceService.getInvoices).toHaveBeenCalledWith(
         userId,
         query.statuses,
+        undefined,
+      );
+    });
+
+    it('should pass userId, statuses and direction to service', async () => {
+      // Arrange
+      const query: FetchInvoicesRequestDto = {
+        statuses: [INVOICE_STATUS.SENT, INVOICE_STATUS.PAID],
+        direction: INVOICE_DIRECTION.ISSUED,
+      };
+      const mockInvoices = [createMockInvoice()];
+      const mockResponse = createMockResponse();
+      invoiceService.getInvoices.mockResolvedValue(mockInvoices);
+      responder.apply.mockReturnValue(mockResponse);
+
+      // Act
+      await target.handle(authUser, query);
+
+      // Assert
+      expect(invoiceService.getInvoices).toHaveBeenCalledWith(
+        userId,
+        query.statuses,
+        INVOICE_DIRECTION.ISSUED,
       );
     });
 
@@ -106,6 +131,7 @@ describe('FetchInvoicesAction', () => {
       // Assert
       expect(invoiceService.getInvoices).toHaveBeenCalledWith(
         userId,
+        undefined,
         undefined,
       );
       expect(responder.apply).toHaveBeenCalledWith([]);
@@ -180,9 +206,11 @@ describe('FetchInvoicesAction', () => {
       await target.handle(authUser, query);
 
       // Assert
-      expect(invoiceService.getInvoices).toHaveBeenCalledWith(userId, [
-        INVOICE_STATUS.PAID,
-      ]);
+      expect(invoiceService.getInvoices).toHaveBeenCalledWith(
+        userId,
+        [INVOICE_STATUS.PAID],
+        undefined,
+      );
     });
   });
 });

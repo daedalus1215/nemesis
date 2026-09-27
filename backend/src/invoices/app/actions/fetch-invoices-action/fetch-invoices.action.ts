@@ -28,6 +28,7 @@ export class FetchInvoicesAction {
     const invoices = await this.invoiceService.getInvoices(
       user.userId,
       query.statuses,
+      query.direction,
     );
 
     return this.responder.apply(invoices);

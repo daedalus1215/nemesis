@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsNumber,
   IsPositive,
   IsOptional,
@@ -22,4 +23,8 @@ export class CreateInvoiceRequestDto {
 
   @IsDateString()
   dueDate: string;
+
+  @IsOptional()
+  @IsBoolean()
+  send?: boolean;
 }

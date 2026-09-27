@@ -4,9 +4,12 @@ import { FetchInvoicesTransactionScript } from '../transaction-scripts/fetch-inv
 import { GetInvoiceByIdTransactionScript } from '../transaction-scripts/get-invoice-by-id-TS/get-invoice-by-id.transaction.script';
 import { UpdateInvoiceStatusTransactionScript } from '../transaction-scripts/update-invoice-status-TS/update-invoice-status.transaction.script';
 import { CancelInvoiceTransactionScript } from '../transaction-scripts/cancel-invoice-TS/cancel-invoice.transaction.script';
+import { MarkOverdueInvoicesTransactionScript } from '../transaction-scripts/mark-overdue-invoices-TS/mark-overdue-invoices.transaction.script';
+import { SendInvoiceTransactionScript } from '../transaction-scripts/send-invoice-TS/send-invoice.transaction.script';
 import {
   Invoice,
   InvoiceStatusType,
+  InvoiceDirectionType,
   INVOICE_STATUS,
 } from '../entities/invoice.entity';
 import { CreateInvoiceRequestDto } from '../../app/actions/create-invoice-action/create-invoice.request.dto';
@@ -20,6 +23,8 @@ export class InvoiceService {
     private readonly getInvoiceByIdTransactionScript: GetInvoiceByIdTransactionScript,
     private readonly updateInvoiceStatusTransactionScript: UpdateInvoiceStatusTransactionScript,
     private readonly cancelInvoiceTransactionScript: CancelInvoiceTransactionScript,
+    private readonly markOverdueInvoicesTransactionScript: MarkOverdueInvoicesTransactionScript,
+    private readonly sendInvoiceTransactionScript: SendInvoiceTransactionScript,
     private readonly paymentAggregator: PaymentAggregator,
   ) {}
 
@@ -33,12 +38,31 @@ export class InvoiceService {
   async getInvoices(
     userId: number,
     statuses?: InvoiceStatusType[],
+    direction?: InvoiceDirectionType,
   ): Promise<Invoice[]> {
-    return await this.fetchInvoicesTransactionScript.execute(userId, statuses);
+    return await this.fetchInvoicesTransactionScript.execute(
+      userId,
+      statuses,
+      direction,
+    );
   }
 
   async getInvoiceById(invoiceId: number): Promise<Invoice | null> {
     return await this.getInvoiceByIdTransactionScript.execute(invoiceId);
+  }
+
+  async markOverdueInvoices(): Promise<number> {
+    return await this.markOverdueInvoicesTransactionScript.execute();
+  }
+
+  async sendInvoice(
+    invoiceId: number,
+    issuerUserId: number,
+  ): Promise<Invoice> {
+    return await this.sendInvoiceTransactionScript.execute(
+      invoiceId,
+      issuerUserId,
+    );
   }
 
   async applyPaymentToInvoice(
@@ -48,6 +72,13 @@ export class InvoiceService {
     const invoice = await this.getInvoiceById(invoiceId);
     if (!invoice) {
       throw new Error('Invoice not found');
+    }
+
+    if (
+      invoice.status !== INVOICE_STATUS.SENT &&
+      invoice.status !== INVOICE_STATUS.OVERDUE
+    ) {
+      throw new Error('Only sent or overdue invoices can be paid');
     }
 
     const newBalanceDue = invoice.balanceDue - paymentAmount;

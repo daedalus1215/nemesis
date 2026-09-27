@@ -74,17 +74,15 @@ export const SendInvoicePage: React.FC = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Allow today's date - reject only past dates
-    if (dueDate < today) {
-      return 'Due date must be today or in the future';
+    // The backend requires a strictly future due date
+    if (dueDate <= today) {
+      return 'Due date must be in the future';
     }
     
     return null;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const submit = async (asDraft: boolean) => {
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -101,10 +99,15 @@ export const SendInvoicePage: React.FC = () => {
         amount: parseFloat(amount),
         description: formData.description.trim() || undefined,
         dueDate: formData.dueDate,
+        send: !asDraft,
       });
 
       if (response.data.success) {
-        setSuccess(`Invoice sent successfully! Invoice ID: ${response.data.invoiceId || 'N/A'}`);
+        setSuccess(
+          asDraft
+            ? `Draft saved! Invoice ID: ${response.data.invoiceId || 'N/A'} — send it from its detail page.`
+            : `Invoice sent successfully! Invoice ID: ${response.data.invoiceId || 'N/A'}`,
+        );
         // Reset form
         setAmount("");
         setFormData({
@@ -114,18 +117,29 @@ export const SendInvoicePage: React.FC = () => {
         });
       }
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || (err as Error).message || 'An error occurred while sending invoice');
+      setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || (err as Error).message || 'An error occurred while saving invoice');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void submit(false);
+  };
+
+  const handleSaveDraft = () => {
+    void submit(true);
   };
 
   const handleCancel = () => {
     navigate("/accounts");
   };
 
-  // Get minimum date (today)
+  // The backend requires a strictly future due date, so the picker's
+  // minimum is tomorrow.
   const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(new Date(today).getTime() + 86400000).toISOString().split('T')[0];
 
   if (usersLoading) {
     return (
@@ -149,7 +163,7 @@ export const SendInvoicePage: React.FC = () => {
         <button className={styles.backButton} onClick={() => navigate("/accounts")}>
           ← Back
         </button>
-        <div className={styles.subtitle}>Create and send an invoice</div>
+        <div className={styles.subtitle}>Create an invoice</div>
       </div>
 
       <div className={styles.centerContent}>
@@ -207,7 +221,7 @@ export const SendInvoicePage: React.FC = () => {
                   value={formData.dueDate}
                   onChange={handleInputChange}
                   className={styles.input}
-                  min={today}
+                  min={tomorrow}
                   required
                 />
               </div>
@@ -259,6 +273,14 @@ export const SendInvoicePage: React.FC = () => {
                   className={styles.submitButton}
                 >
                   {loading ? 'Sending...' : 'Send Invoice'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  disabled={loading || !amount || amount === "0" || amount === "." || !formData.debtorUserId || !formData.dueDate}
+                  className={styles.draftButton}
+                >
+                  {loading ? 'Saving...' : 'Save as Draft'}
                 </button>
                 <button
                   type="button"

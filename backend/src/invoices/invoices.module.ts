@@ -20,6 +20,11 @@ import { CancelInvoiceResponder } from './app/actions/cancel-invoice-action/canc
 import { InvoiceAppService } from './app/app-service/invoice.app.service';
 import { PaymentsModule } from '../payments/payment.module';
 import { CancelInvoiceTransactionScript } from './domain/transaction-scripts/cancel-invoice-TS/cancel-invoice.transaction.script';
+import { MarkOverdueInvoicesTransactionScript } from './domain/transaction-scripts/mark-overdue-invoices-TS/mark-overdue-invoices.transaction.script';
+import { OverdueInvoiceScheduler } from './app/cron/overdue-invoice.scheduler';
+import { SendInvoiceTransactionScript } from './domain/transaction-scripts/send-invoice-TS/send-invoice.transaction.script';
+import { SendInvoiceAction } from './app/actions/send-invoice-action/send-invoice.action';
+import { SendInvoiceResponder } from './app/actions/send-invoice-action/send-invoice.responder';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Invoice]), PaymentsModule],
@@ -30,6 +35,9 @@ import { CancelInvoiceTransactionScript } from './domain/transaction-scripts/can
     GetInvoiceByIdTransactionScript,
     UpdateInvoiceStatusTransactionScript,
     CancelInvoiceTransactionScript,
+    MarkOverdueInvoicesTransactionScript,
+    OverdueInvoiceScheduler,
+    SendInvoiceTransactionScript,
     InvoiceService,
     InvoiceAppService,
     CreateInvoiceResponder,
@@ -37,6 +45,7 @@ import { CancelInvoiceTransactionScript } from './domain/transaction-scripts/can
     FetchInvoiceByIdResponder,
     PayInvoiceResponder,
     CancelInvoiceResponder,
+    SendInvoiceResponder,
   ],
   controllers: [
     CreateInvoiceAction,
@@ -44,6 +53,7 @@ import { CancelInvoiceTransactionScript } from './domain/transaction-scripts/can
     FetchInvoiceByIdAction,
     PayInvoiceAction,
     CancelInvoiceAction,
+    SendInvoiceAction,
   ],
   exports: [InvoiceService],
 })

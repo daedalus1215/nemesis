@@ -9,6 +9,7 @@ import {
   Autorenew,
 } from "@mui/icons-material";
 import { BottomNavigation } from "../BottomNavigation/BottomNavigation";
+import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import { SignOutButton } from "../SignOutButton/SignOutButton";
 import { useAuth } from "../../auth/useAuth";
 import styles from "./AppShell.module.css";
@@ -85,6 +86,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         <header className={styles.topbar}>
           <h1 className={styles.pageTitle}>{title}</h1>
           <div className={styles.topbarUser}>
+            <ThemeToggle />
             <div className={styles.avatar}>{initials}</div>
             <SignOutButton />
           </div>

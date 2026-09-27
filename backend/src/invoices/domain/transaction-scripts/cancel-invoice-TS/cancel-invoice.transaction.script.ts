@@ -12,6 +12,16 @@ export class CancelInvoiceTransactionScript {
       throw new Error('Invoice not found');
     }
 
+    if (
+      invoice.status !== INVOICE_STATUS.DRAFT &&
+      invoice.status !== INVOICE_STATUS.SENT &&
+      invoice.status !== INVOICE_STATUS.OVERDUE
+    ) {
+      throw new Error(
+        'Only draft, sent, or overdue invoices can be cancelled',
+      );
+    }
+
     invoice.balanceDue = 0;
     invoice.status = INVOICE_STATUS.CANCELLED;
 

@@ -6,7 +6,7 @@ import { useAuth } from "../../auth/useAuth";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import { useFetchInvoiceById } from "./useFetchInvoiceById";
 import api from "../../api/axios.interceptor";
-import { CANCEL_INVOICE_URL } from "../../api/urls";
+import { CANCEL_INVOICE_URL, SEND_INVOICE_URL } from "../../api/urls";
 import styles from "./InvoiceDetailPage.module.css";
 
 export const InvoiceDetailPage: React.FC = () => {
@@ -60,8 +60,12 @@ export const InvoiceDetailPage: React.FC = () => {
 
   const isDebtor = invoice.debtorUserId === user.id;
   const isIssuer = invoice.issuerUserId === user.id;
-  const canPay = isDebtor && invoice.status !== "paid" && invoice.balanceDue > 0;
+  const canPay =
+    isDebtor &&
+    (invoice.status === "sent" || invoice.status === "overdue") &&
+    invoice.balanceDue > 0;
   const canCancel = isIssuer && invoice.status !== "cancelled" && invoice.status !== "paid";
+  const canSend = isIssuer && invoice.status === "draft";
 
   const getUserName = (userId: number): string => {
     const foundUser = users.find((u) => u.id === userId);
@@ -121,6 +125,26 @@ export const InvoiceDetailPage: React.FC = () => {
       }
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || (err as Error).message || 'An error occurred while paying invoice');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendInvoice = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      const response = await api.post(SEND_INVOICE_URL(invoiceId));
+
+      if (response.data.success) {
+        setSuccess('Invoice sent successfully!');
+        // Refetch invoice to get updated status
+        await refetchInvoice();
+      }
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || (err as Error).message || 'An error occurred while sending invoice');
     } finally {
       setLoading(false);
     }
@@ -227,6 +251,18 @@ export const InvoiceDetailPage: React.FC = () => {
               </div>
             </div>
 
+            {canSend && (
+              <div className={styles.cancelSection}>
+                <button
+                  onClick={handleSendInvoice}
+                  disabled={loading}
+                  className={styles.payButton}
+                >
+                  {loading ? 'Processing...' : 'Send Invoice'}
+                </button>
+              </div>
+            )}
+
             {canPay && (
               <div className={styles.paymentSection}>
                 <div className={styles.paymentInfo}>
@@ -258,6 +294,8 @@ export const InvoiceDetailPage: React.FC = () => {
               <div className={styles.cannotPayMessage}>
                 {invoice.status === "paid"
                   ? "This invoice has already been paid."
+                  : invoice.status === "draft"
+                  ? "This invoice is a draft — it can be paid once it is sent."
                   : !isDebtor
                   ? "Only the debtor can pay this invoice."
                   : "This invoice cannot be paid."}
