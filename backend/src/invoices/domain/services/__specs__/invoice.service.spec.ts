@@ -6,6 +6,7 @@ import { GetInvoiceByIdTransactionScript } from '../../transaction-scripts/get-i
 import { UpdateInvoiceStatusTransactionScript } from '../../transaction-scripts/update-invoice-status-TS/update-invoice-status.transaction.script';
 import { CancelInvoiceTransactionScript } from '../../transaction-scripts/cancel-invoice-TS/cancel-invoice.transaction.script';
 import { MarkOverdueInvoicesTransactionScript } from '../../transaction-scripts/mark-overdue-invoices-TS/mark-overdue-invoices.transaction.script';
+import { SendInvoiceTransactionScript } from '../../transaction-scripts/send-invoice-TS/send-invoice.transaction.script';
 import { PaymentAggregator } from '../../../../payments/domain/aggregators/payment.aggregator';
 import { CreateInvoiceRequestDto } from '../../../app/actions/create-invoice-action/create-invoice.request.dto';
 import {
@@ -21,6 +22,7 @@ describe('InvoiceService', () => {
   let getInvoiceByIdTransactionScript: jest.Mocked<GetInvoiceByIdTransactionScript>;
   let updateInvoiceStatusTransactionScript: jest.Mocked<UpdateInvoiceStatusTransactionScript>;
   let markOverdueInvoicesTransactionScript: jest.Mocked<MarkOverdueInvoicesTransactionScript>;
+  let sendInvoiceTransactionScript: jest.Mocked<SendInvoiceTransactionScript>;
 
   const userId = 1;
   const invoiceId = 1;
@@ -60,6 +62,10 @@ describe('InvoiceService', () => {
       execute: jest.fn(),
     };
 
+    const mockSendInvoiceTransactionScript = {
+      execute: jest.fn(),
+    };
+
     const mockPaymentAggregator = {
       hasPaymentApplications: jest.fn(),
     };
@@ -92,6 +98,10 @@ describe('InvoiceService', () => {
           useValue: mockMarkOverdueInvoicesTransactionScript,
         },
         {
+          provide: SendInvoiceTransactionScript,
+          useValue: mockSendInvoiceTransactionScript,
+        },
+        {
           provide: PaymentAggregator,
           useValue: mockPaymentAggregator,
         },
@@ -101,6 +111,7 @@ describe('InvoiceService', () => {
     markOverdueInvoicesTransactionScript = module.get(
       MarkOverdueInvoicesTransactionScript,
     );
+    sendInvoiceTransactionScript = module.get(SendInvoiceTransactionScript);
     createInvoiceTransactionScript = module.get(CreateInvoiceTransactionScript);
     fetchInvoicesTransactionScript = module.get(FetchInvoicesTransactionScript);
     getInvoiceByIdTransactionScript = module.get(
@@ -349,6 +360,27 @@ describe('InvoiceService', () => {
       // Assert
       expect(count).toBe(4);
       expect(markOverdueInvoicesTransactionScript.execute).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('sendInvoice', () => {
+    it('should delegate to the send invoice transaction script', async () => {
+      // Arrange
+      const mockInvoice = createMockInvoice({
+        id: invoiceId,
+        status: INVOICE_STATUS.SENT,
+      });
+      sendInvoiceTransactionScript.execute.mockResolvedValue(mockInvoice);
+
+      // Act
+      const result = await target.sendInvoice(invoiceId, userId);
+
+      // Assert
+      expect(result).toEqual(mockInvoice);
+      expect(sendInvoiceTransactionScript.execute).toHaveBeenCalledWith(
+        invoiceId,
+        userId,
+      );
     });
   });
 });
