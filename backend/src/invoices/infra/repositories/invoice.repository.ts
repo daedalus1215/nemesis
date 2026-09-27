@@ -20,7 +20,7 @@ export class InvoiceRepository {
         debtorUserId: userId,
         status: In([INVOICE_STATUS.SENT, INVOICE_STATUS.OVERDUE]),
       },
-      order: { dueDate: 'ASC' },
+      order: { dueDate: 'ASC', id: 'DESC' },
     });
   }
 
@@ -30,7 +30,7 @@ export class InvoiceRepository {
         debtorUserId: userId,
         status: INVOICE_STATUS.PAID,
       },
-      order: { dueDate: 'DESC' },
+      order: { dueDate: 'DESC', id: 'DESC' },
     });
   }
 
@@ -40,7 +40,7 @@ export class InvoiceRepository {
         issuerUserId: userId,
         status: In([INVOICE_STATUS.SENT, INVOICE_STATUS.OVERDUE]),
       },
-      order: { dueDate: 'ASC' },
+      order: { dueDate: 'ASC', id: 'DESC' },
     });
   }
 
@@ -50,7 +50,7 @@ export class InvoiceRepository {
         issuerUserId: userId,
         status: INVOICE_STATUS.PAID,
       },
-      order: { dueDate: 'DESC' },
+      order: { dueDate: 'DESC', id: 'DESC' },
     });
   }
 
@@ -69,7 +69,7 @@ export class InvoiceRepository {
           ...(statuses && statuses.length > 0 ? { status: In(statuses) } : {}),
         },
       ],
-      order: { dueDate: 'DESC' },
+      order: { dueDate: 'DESC', id: 'DESC' },
     });
   }
 
