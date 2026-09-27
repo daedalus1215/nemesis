@@ -11,6 +11,13 @@ export const INVOICE_STATUS = {
 export type InvoiceStatusType =
   (typeof INVOICE_STATUS)[keyof typeof INVOICE_STATUS];
 
+export const INVOICE_DIRECTION = {
+  ISSUED: 'issued',
+  RECEIVED: 'received',
+} as const;
+
+export type InvoiceDirectionType =
+  (typeof INVOICE_DIRECTION)[keyof typeof INVOICE_DIRECTION];
 @Entity({ name: 'invoices' })
 export class Invoice {
   @PrimaryGeneratedColumn({ type: 'int' })

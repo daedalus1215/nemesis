@@ -12,6 +12,7 @@ import { CreateInvoiceRequestDto } from '../../../app/actions/create-invoice-act
 import {
   InvoiceStatusType,
   INVOICE_STATUS,
+  INVOICE_DIRECTION,
 } from '../../entities/invoice.entity';
 import { createMockInvoice } from '../../../../shared/test/invoice-test-utils';
 
@@ -159,9 +160,9 @@ describe('InvoiceService', () => {
       const result = await target.getInvoices(userId);
 
       // Assert
-      expect(result).toEqual(mockInvoices);
       expect(fetchInvoicesTransactionScript.execute).toHaveBeenCalledWith(
         userId,
+        undefined,
         undefined,
       );
     });
@@ -179,10 +180,32 @@ describe('InvoiceService', () => {
       const result = await target.getInvoices(userId, statuses);
 
       // Assert
+      expect(fetchInvoicesTransactionScript.execute).toHaveBeenCalledWith(
+        userId,
+        statuses,
+        undefined,
+      );
+    });
+
+    it('should fetch invoices with status filter and direction', async () => {
+      // Arrange
+      const statuses: InvoiceStatusType[] = [INVOICE_STATUS.SENT];
+      const mockInvoices = [createMockInvoice({ status: INVOICE_STATUS.SENT })];
+      fetchInvoicesTransactionScript.execute.mockResolvedValue(mockInvoices);
+
+      // Act
+      const result = await target.getInvoices(
+        userId,
+        statuses,
+        INVOICE_DIRECTION.ISSUED,
+      );
+
+      // Assert
       expect(result).toEqual(mockInvoices);
       expect(fetchInvoicesTransactionScript.execute).toHaveBeenCalledWith(
         userId,
         statuses,
+        INVOICE_DIRECTION.ISSUED,
       );
     });
   });

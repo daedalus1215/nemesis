@@ -2,7 +2,9 @@ import { IsOptional, IsArray, IsEnum } from 'class-validator';
 import { Transform } from 'class-transformer';
 import {
   INVOICE_STATUS,
+  INVOICE_DIRECTION,
   InvoiceStatusType,
+  InvoiceDirectionType,
 } from '../../../domain/entities/invoice.entity';
 
 export class FetchInvoicesRequestDto {
@@ -19,4 +21,8 @@ export class FetchInvoicesRequestDto {
     return [];
   })
   statuses?: InvoiceStatusType[];
+
+  @IsOptional()
+  @IsEnum(INVOICE_DIRECTION)
+  direction?: InvoiceDirectionType;
 }
