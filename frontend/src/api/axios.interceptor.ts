@@ -33,11 +33,18 @@ api.interceptors.response.use(
     if (error.response) {
       // Handle specific error cases
       switch (error.response.status) {
-        case 401:
-          // Handle unauthorized (e.g., redirect to login)
+        case 401: {
+          const url = error.config?.url ?? '';
+          // A 401 from login/register is just rejected credentials, not an
+          // expired session — the page handles it. Redirecting here reloads
+          // the page and wipes the error message.
+          if (url.includes('/auth/login') || url.includes('/auth/register')) {
+            break;
+          }
           localStorage.removeItem('jwt_token');
           window.location.href = '/login';
           break;
+        }
         case 403:
           // Handle forbidden
           console.error('Forbidden access:', error.response.data);

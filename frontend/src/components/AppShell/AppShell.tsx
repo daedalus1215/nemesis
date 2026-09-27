@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   AccountBalance,
   AttachMoney,
@@ -7,6 +7,7 @@ import {
   TrendingFlat,
   Receipt,
   Autorenew,
+  Settings,
 } from "@mui/icons-material";
 import { BottomNavigation } from "../BottomNavigation/BottomNavigation";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
@@ -24,11 +25,12 @@ const navItems = [
   { label: "Transfer", to: "/accounts/transfer", icon: <TrendingFlat /> },
   { label: "Invoices", to: "/invoices", icon: <Receipt /> },
   { label: "Recurring", to: "/recurring-invoices", icon: <Autorenew /> },
+  { label: "Settings", to: "/settings", icon: <Settings /> },
 ];
 
 interface AppShellProps {
   /** Active item for the mobile bottom navigation. */
-  selected: BottomNavKey;
+  selected: BottomNavKey | null;
   /** Title shown in the top bar. */
   title: string;
   children: React.ReactNode;
@@ -87,6 +89,14 @@ export const AppShell: React.FC<AppShellProps> = ({
           <h1 className={styles.pageTitle}>{title}</h1>
           <div className={styles.topbarUser}>
             <ThemeToggle />
+            <Link
+              to="/settings"
+              className={styles.avatarLink}
+              title="Settings"
+              aria-label="Account settings"
+            >
+              <div className={styles.avatar}>{initials}</div>
+            </Link>
             <div className={styles.avatar}>{initials}</div>
             <SignOutButton />
           </div>

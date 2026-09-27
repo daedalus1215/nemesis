@@ -14,6 +14,10 @@ import { ConfigModule } from '@nestjs/config';
 import { UserAggregator } from './domain/user.aggregator';
 import { FetchUserResponder } from './app/controllers/fetch-user-action/fetch-user.responder';
 import { FetchUserAction } from './app/controllers/fetch-user-action/fetch-user.action';
+import { UpdateUsernameAction } from './app/controllers/update-username-action/update-username.action';
+import { UpdatePasswordAction } from './app/controllers/update-password-action/update-password.action';
+import { UpdateUsernameTransactionScript } from './domain/transaction-scripts/update-username-ts/update-username.transaction.script';
+import { UpdatePasswordTransactionScript } from './domain/transaction-scripts/update-password-ts/update-password.transaction.script';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), ConfigModule],
@@ -24,11 +28,19 @@ import { FetchUserAction } from './app/controllers/fetch-user-action/fetch-user.
     FetchUserResponder,
     RegisterUserResponder,
     CreateUserTransactionScript,
+    UpdateUsernameTransactionScript,
+    UpdatePasswordTransactionScript,
     UserExistsValidator,
     IsPasswordStrongValidator,
     UserAggregator,
   ],
-  controllers: [FetchProfileAction, FetchUserAction, RegisterUserAction],
+  controllers: [
+    FetchProfileAction,
+    FetchUserAction,
+    RegisterUserAction,
+    UpdateUsernameAction,
+    UpdatePasswordAction,
+  ],
   exports: [UserAggregator],
 })
 export class UsersModule {}
