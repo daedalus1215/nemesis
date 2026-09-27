@@ -74,9 +74,9 @@ export const SendInvoicePage: React.FC = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Allow today's date - reject only past dates
-    if (dueDate < today) {
-      return 'Due date must be today or in the future';
+    // The backend requires a strictly future due date
+    if (dueDate <= today) {
+      return 'Due date must be in the future';
     }
     
     return null;
@@ -124,8 +124,10 @@ export const SendInvoicePage: React.FC = () => {
     navigate("/accounts");
   };
 
-  // Get minimum date (today)
+  // The backend requires a strictly future due date, so the picker's
+  // minimum is tomorrow.
   const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(new Date(today).getTime() + 86400000).toISOString().split('T')[0];
 
   if (usersLoading) {
     return (
@@ -207,7 +209,7 @@ export const SendInvoicePage: React.FC = () => {
                   value={formData.dueDate}
                   onChange={handleInputChange}
                   className={styles.input}
-                  min={today}
+                  min={tomorrow}
                   required
                 />
               </div>
