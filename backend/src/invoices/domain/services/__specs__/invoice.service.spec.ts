@@ -232,6 +232,60 @@ describe('InvoiceService', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('should reject payment when the invoice is a draft', async () => {
+      // Arrange
+      const mockInvoice = createMockInvoice({
+        id: invoiceId,
+        balanceDue: 100,
+        status: INVOICE_STATUS.DRAFT,
+      });
+      getInvoiceByIdTransactionScript.execute.mockResolvedValue(mockInvoice);
+
+      // Act & Assert
+      await expect(
+        target.applyPaymentToInvoice(invoiceId, 50),
+      ).rejects.toThrow('Only sent or overdue invoices can be paid');
+      expect(
+        updateInvoiceStatusTransactionScript.execute,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should reject payment when the invoice is paid', async () => {
+      // Arrange
+      const mockInvoice = createMockInvoice({
+        id: invoiceId,
+        balanceDue: 0,
+        status: INVOICE_STATUS.PAID,
+      });
+      getInvoiceByIdTransactionScript.execute.mockResolvedValue(mockInvoice);
+
+      // Act & Assert
+      await expect(
+        target.applyPaymentToInvoice(invoiceId, 50),
+      ).rejects.toThrow('Only sent or overdue invoices can be paid');
+      expect(
+        updateInvoiceStatusTransactionScript.execute,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should reject payment when the invoice is cancelled', async () => {
+      // Arrange
+      const mockInvoice = createMockInvoice({
+        id: invoiceId,
+        balanceDue: 0,
+        status: INVOICE_STATUS.CANCELLED,
+      });
+      getInvoiceByIdTransactionScript.execute.mockResolvedValue(mockInvoice);
+
+      // Act & Assert
+      await expect(
+        target.applyPaymentToInvoice(invoiceId, 50),
+      ).rejects.toThrow('Only sent or overdue invoices can be paid');
+      expect(
+        updateInvoiceStatusTransactionScript.execute,
+      ).not.toHaveBeenCalled();
+    });
+
     it('should throw error when payment amount exceeds balance due', async () => {
       // Arrange
       const mockInvoice = createMockInvoice({
