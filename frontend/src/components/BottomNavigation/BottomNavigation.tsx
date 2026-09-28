@@ -14,12 +14,14 @@ const labels = {
   Invoices: "Invoices",
 } as const;
 
-export const BottomNavigation: React.FC<{ selected: keyof typeof labels }> = ({ selected }) => {
-  const [value, setValue] = React.useState(selected);
+export const BottomNavigation: React.FC<{
+  selected: keyof typeof labels | null;
+}> = ({ selected }) => {
+  const [value, setValue] = React.useState<string | null>(selected);
   return (
     <MuiBottomNavigation
       showLabels
-      value={value}
+        value={value ?? ""}
       onChange={(_, newValue) => {
         setValue(newValue);
       }}

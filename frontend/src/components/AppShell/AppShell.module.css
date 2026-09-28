@@ -128,6 +128,13 @@
   color: #fff;
 }
 
+/* Top-bar avatar doubles as the settings entry point. */
+.avatarLink {
+  display: inline-flex;
+  text-decoration: none;
+  border-radius: 50%;
+}
+
 /* ---------- Main column ---------- */
 .main {
   flex: 1;
