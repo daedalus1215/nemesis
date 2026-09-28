@@ -154,11 +154,14 @@ a:hover {
 html,
 body,
 #root {
-  height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
+
+/* The document must scroll normally: mobile browsers position native
+   popups (e.g. <select> option lists) against the document viewport, and a
+   locked 100vh document with an inner scroller makes them anchor at the
+   element's unscrolled position — the dropdown "drifts" off the control. */
 
 body {
   background-color: var(--color-background);
