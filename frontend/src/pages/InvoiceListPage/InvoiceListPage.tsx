@@ -7,7 +7,7 @@ import { useAuth } from "../../auth/useAuth";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import styles from "./InvoiceListPage.module.css";
 
-type InvoiceStatusFilter = "pending" | "all" | "draft" | "sent" | "paid" | "overdue" | "cancelled";
+type InvoiceStatusFilter = "pending" | "all" | "draft" | "sent" | "received" | "paid" | "overdue" | "cancelled";
 
 export const InvoicePage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,11 +20,18 @@ export const InvoicePage: React.FC = () => {
       ? undefined
       : statusFilter === "pending"
       ? ["sent", "overdue"]
-      : statusFilter === "sent"
-      ? ["sent"]
+      : statusFilter === "sent" || statusFilter === "received"
+      ? ["sent", "overdue", "paid", "cancelled"]
       : [statusFilter];
 
-  const { invoices, loading, error } = useFetchInvoices(statuses);
+  const direction =
+    statusFilter === "sent"
+      ? "issued"
+      : statusFilter === "received"
+      ? "received"
+      : undefined;
+
+  const { invoices, loading, error } = useFetchInvoices(statuses, direction);
 
   const handleSendInvoice = () => {
     navigate("/invoices/send");
@@ -95,7 +102,7 @@ export const InvoicePage: React.FC = () => {
       </div>
 
       <div className={styles.filterButtons}>
-        {(["pending", "all", "draft", "sent", "paid", "overdue", "cancelled"] as InvoiceStatusFilter[]).map(
+        {(["pending", "all", "draft", "sent", "received", "paid", "overdue", "cancelled"] as InvoiceStatusFilter[]).map(
           (filter) => (
             <button
               key={filter}
