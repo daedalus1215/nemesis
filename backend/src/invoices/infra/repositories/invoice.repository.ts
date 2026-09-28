@@ -4,7 +4,9 @@ import { Repository, In } from 'typeorm';
 import {
   Invoice,
   INVOICE_STATUS,
+  INVOICE_DIRECTION,
   InvoiceStatusType,
+  InvoiceDirectionType,
 } from '../../domain/entities/invoice.entity';
 
 @Injectable()
@@ -57,18 +59,21 @@ export class InvoiceRepository {
   async findByUserIdWithStatusFilter(
     userId: number,
     statuses?: InvoiceStatusType[],
+    direction?: InvoiceDirectionType,
   ): Promise<Invoice[]> {
+    const statusFilter =
+      statuses && statuses.length > 0 ? { status: In(statuses) } : {};
+    const where =
+      direction === INVOICE_DIRECTION.ISSUED
+        ? [{ issuerUserId: userId, ...statusFilter }]
+        : direction === INVOICE_DIRECTION.RECEIVED
+          ? [{ debtorUserId: userId, ...statusFilter }]
+          : [
+              { issuerUserId: userId, ...statusFilter },
+              { debtorUserId: userId, ...statusFilter },
+            ];
     return this.repository.find({
-      where: [
-        {
-          issuerUserId: userId,
-          ...(statuses && statuses.length > 0 ? { status: In(statuses) } : {}),
-        },
-        {
-          debtorUserId: userId,
-          ...(statuses && statuses.length > 0 ? { status: In(statuses) } : {}),
-        },
-      ],
+      where,
       order: { dueDate: 'DESC', id: 'DESC' },
     });
   }

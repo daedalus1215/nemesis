@@ -9,6 +9,7 @@ import { SendInvoiceTransactionScript } from '../transaction-scripts/send-invoic
 import {
   Invoice,
   InvoiceStatusType,
+  InvoiceDirectionType,
   INVOICE_STATUS,
 } from '../entities/invoice.entity';
 import { CreateInvoiceRequestDto } from '../../app/actions/create-invoice-action/create-invoice.request.dto';
@@ -37,8 +38,13 @@ export class InvoiceService {
   async getInvoices(
     userId: number,
     statuses?: InvoiceStatusType[],
+    direction?: InvoiceDirectionType,
   ): Promise<Invoice[]> {
-    return await this.fetchInvoicesTransactionScript.execute(userId, statuses);
+    return await this.fetchInvoicesTransactionScript.execute(
+      userId,
+      statuses,
+      direction,
+    );
   }
 
   async getInvoiceById(invoiceId: number): Promise<Invoice | null> {

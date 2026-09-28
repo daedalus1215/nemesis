@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Invoice, InvoiceStatusType } from '../../entities/invoice.entity';
+import {
+  Invoice,
+  InvoiceStatusType,
+  InvoiceDirectionType,
+} from '../../entities/invoice.entity';
 import { InvoiceRepository } from '../../../infra/repositories/invoice.repository';
 
 @Injectable()
@@ -9,10 +13,12 @@ export class FetchInvoicesTransactionScript {
   async execute(
     userId: number,
     statuses?: InvoiceStatusType[],
+    direction?: InvoiceDirectionType,
   ): Promise<Invoice[]> {
     return await this.invoiceRepository.findByUserIdWithStatusFilter(
       userId,
       statuses,
+      direction,
     );
   }
 }
