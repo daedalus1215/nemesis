@@ -47,6 +47,10 @@ function AppRoutes() {
           <Route path="/recurring-invoices/create" element={<CreateRecurringInvoicePage />} />
           <Route path="/recurring-invoices/:id" element={<RecurringInvoiceDetailPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          {/* Authenticated visitors hitting a public/unknown path (e.g. a
+              stale /login or /register link) would otherwise get a blank
+              page — the authed route list has no match for them. */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </>
     );
