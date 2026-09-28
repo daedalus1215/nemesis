@@ -26,7 +26,7 @@ export class UpdatePasswordTransactionScript {
   async apply(command: UpdatePasswordCommand): Promise<void> {
     const { userId, currentPassword, newPassword } = command;
 
-    const currentUser = await this.userRepository.findById(userId);
+    const currentUser = await this.userRepository.findByIdWithPassword(userId);
     if (!currentUser) {
       throw new NotFoundException('User not found');
     }

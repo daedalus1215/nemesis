@@ -38,7 +38,7 @@ describe('UpdatePasswordTransactionScript', () => {
     jest.clearAllMocks();
 
     const mockUserRepository = {
-      findById: jest.fn(),
+      findByIdWithPassword: jest.fn(),
       update: jest.fn(),
     };
     // Mimic ConfigService: return the provided default when the key is unset.
@@ -63,7 +63,7 @@ describe('UpdatePasswordTransactionScript', () => {
 
   describe('apply', () => {
     it('hashes and persists the new password on success', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       // First compare: current password matches; second: new differs.
       (bcrypt.compare as jest.Mock)
         .mockResolvedValueOnce(true)
@@ -79,7 +79,7 @@ describe('UpdatePasswordTransactionScript', () => {
     });
 
     it('uses the configured salt rounds when present', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       (bcrypt.compare as jest.Mock)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(false);
@@ -92,7 +92,7 @@ describe('UpdatePasswordTransactionScript', () => {
     });
 
     it('throws 404 when the user does not exist', async () => {
-      userRepository.findById.mockResolvedValue(null);
+      userRepository.findByIdWithPassword.mockResolvedValue(null);
 
       await expect(target.apply(makeCommand())).rejects.toThrow(
         'User not found',
@@ -101,7 +101,7 @@ describe('UpdatePasswordTransactionScript', () => {
     });
 
     it('throws 401 when the current password is wrong', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(target.apply(makeCommand())).rejects.toThrow(
@@ -111,7 +111,7 @@ describe('UpdatePasswordTransactionScript', () => {
     });
 
     it('throws 400 when the new password equals the current one', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       (bcrypt.compare as jest.Mock)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true);
@@ -125,7 +125,7 @@ describe('UpdatePasswordTransactionScript', () => {
     });
 
     it('throws 400 when the new password is weak', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       (bcrypt.compare as jest.Mock)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(false);

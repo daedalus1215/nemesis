@@ -35,7 +35,7 @@ describe('UpdateUsernameTransactionScript', () => {
     jest.clearAllMocks();
 
     const mockUserRepository = {
-      findById: jest.fn(),
+      findByIdWithPassword: jest.fn(),
       findByUsername: jest.fn(),
       update: jest.fn(),
     };
@@ -57,7 +57,7 @@ describe('UpdateUsernameTransactionScript', () => {
     it('updates the username and returns the projection on success', async () => {
       const user = makeUser();
       const updatedUser = makeUser({ username: 'newname' });
-      userRepository.findById.mockResolvedValue(user);
+      userRepository.findByIdWithPassword.mockResolvedValue(user);
       userRepository.findByUsername.mockResolvedValue(null);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       userRepository.update.mockResolvedValue(updatedUser);
@@ -73,7 +73,7 @@ describe('UpdateUsernameTransactionScript', () => {
     it('trims the new username before persisting', async () => {
       const user = makeUser();
       const updatedUser = makeUser({ username: 'newname' });
-      userRepository.findById.mockResolvedValue(user);
+      userRepository.findByIdWithPassword.mockResolvedValue(user);
       userRepository.findByUsername.mockResolvedValue(null);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       userRepository.update.mockResolvedValue(updatedUser);
@@ -89,7 +89,7 @@ describe('UpdateUsernameTransactionScript', () => {
     });
 
     it('throws 404 when the user does not exist', async () => {
-      userRepository.findById.mockResolvedValue(null);
+      userRepository.findByIdWithPassword.mockResolvedValue(null);
 
       await expect(target.apply(makeCommand())).rejects.toThrow(
         'User not found',
@@ -98,7 +98,7 @@ describe('UpdateUsernameTransactionScript', () => {
     });
 
     it('throws 400 when the trimmed name is shorter than 3 characters', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
 
       await expect(
         target.apply(makeCommand({ newUsername: 'ab' })),
@@ -107,7 +107,7 @@ describe('UpdateUsernameTransactionScript', () => {
     });
 
     it('throws 400 when the trimmed name is longer than 20 characters', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
 
       await expect(
         target.apply(
@@ -118,7 +118,7 @@ describe('UpdateUsernameTransactionScript', () => {
     });
 
     it('throws 400 when the new name equals the current username', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
 
       await expect(
         target.apply(makeCommand({ newUsername: currentUsername })),
@@ -129,7 +129,7 @@ describe('UpdateUsernameTransactionScript', () => {
     });
 
     it('throws 409 when another user already has the name', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       userRepository.findByUsername.mockResolvedValue(
         makeUser({ id: 2, username: 'newname' }),
       );
@@ -143,7 +143,7 @@ describe('UpdateUsernameTransactionScript', () => {
     it('does not conflict when the name is only held by the same user', async () => {
       const user = makeUser();
       const updatedUser = makeUser({ username: 'newname' });
-      userRepository.findById.mockResolvedValue(user);
+      userRepository.findByIdWithPassword.mockResolvedValue(user);
       // Case-insensitive storage can surface the caller's own row here.
       userRepository.findByUsername.mockResolvedValue(
         makeUser({ username: 'newname' }),
@@ -157,7 +157,7 @@ describe('UpdateUsernameTransactionScript', () => {
     });
 
     it('throws 401 when the current password is wrong', async () => {
-      userRepository.findById.mockResolvedValue(makeUser());
+      userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       userRepository.findByUsername.mockResolvedValue(null);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 

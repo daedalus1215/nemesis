@@ -24,7 +24,7 @@ export class UpdateUsernameTransactionScript {
   ): Promise<UpdateUsernameResponseDto> {
     const { userId, newUsername, currentPassword } = command;
 
-    const currentUser = await this.userRepository.findById(userId);
+    const currentUser = await this.userRepository.findByIdWithPassword(userId);
     if (!currentUser) {
       throw new NotFoundException('User not found');
     }
