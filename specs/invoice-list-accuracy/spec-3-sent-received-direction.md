@@ -26,6 +26,9 @@ in the filter.
 - **Pending** = `sent` + `overdue`, **both directions** — unchanged
   ("everything awaiting payment: what I sent out awaiting payment + what I
   received I owe").
+- **Draft privacy:** an unsent draft is visible **only to its issuer** — it
+  never appears on the debtor's pills (E2E revealed it was leaking into the
+  debtor's All and Draft with an "Owed" badge).
 - **All / Draft / Paid / Overdue / Cancelled** — unchanged (All = both
   directions, every status; the rest are status filters across both
   directions).
@@ -66,13 +69,26 @@ in the filter.
   second param `direction?: string`, included in the query params and in
   the fetch key.
 
+### Commit 3 — `fix(invoices): drafts are private to their issuer in list queries`
+
+- [`invoice.repository.ts`](../../backend/src/invoices/infra/repositories/invoice.repository.ts)
+  `findByUserIdWithStatusFilter`:
+  - the debtor branch never matches `status = draft`:
+    - no status filter → debtor branch gains `status NOT IN ('draft')`
+    - status filter present → `draft` is dropped from the debtor branch's
+      `In(...)` list; a draft-only filter yields no debtor rows (and no rows
+      at all when `direction=received`)
+  - the issuer branch is unchanged.
+
 ## Acceptance criteria
 
 - A issues a sent invoice to B. **A's Sent** shows it; **A's Received**
   does not. **B's Received** shows it; **B's Sent** does not. It appears on
   both users' **Pending** and **All**.
 - A paid invoice A issued appears on A's **Sent** and **Paid** pills.
-- A draft A created appears only on A's **Draft** and **All**.
+- A draft A created appears only on A's **Draft** and **All** — never on
+  B's pills (B's **Draft** and **All** exclude it; B's **Pending** already
+  did).
 - Pending/All/Draft/Paid/Overdue/Cancelled behavior is unchanged from today.
 
 ## Out of scope
