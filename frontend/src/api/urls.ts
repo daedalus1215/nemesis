@@ -6,3 +6,6 @@ export const RECURRING_INVOICE_DETAIL_URL = (id: number) => `/recurring-invoices
 export const ACTIVATE_RECURRING_INVOICE_URL = (id: number) => `/recurring-invoices/${id}/activate`;
 export const PAUSE_RECURRING_INVOICE_URL = (id: number) => `/recurring-invoices/${id}/pause`;
 export const CANCEL_RECURRING_INVOICE_URL = (id: number) => `/recurring-invoices/${id}/cancel`;
+
+export const UPDATE_USERNAME_URL = '/users/username';
+export const UPDATE_PASSWORD_URL = '/users/password';
