@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -14,6 +13,10 @@ import { UpdatePasswordCommand } from './update-password.command';
  * Transaction script for changing the signed-in user's password.
  * Verifies the current password, enforces the same strength rules as
  * registration, and hashes with the configured salt rounds.
+ *
+ * A wrong current password is a 400 (bad input), not a 401: the session
+ * itself is valid, and the frontend's global 401 handler would otherwise
+ * clear the token and bounce the user to the login page.
  */
 @Injectable()
 export class UpdatePasswordTransactionScript {
@@ -36,7 +39,7 @@ export class UpdatePasswordTransactionScript {
       currentUser.password,
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Current password is incorrect');
+      throw new BadRequestException('Current password is incorrect');
     }
 
     const isSamePassword = await bcrypt.compare(

@@ -7,7 +7,9 @@ export const UpdatePasswordSwagger = () => {
     ApiOperation({ summary: "Update the signed-in user's password" }),
     ApiBody({ type: UpdatePasswordRequestDto }),
     ApiResponse({ status: 200, description: 'Password updated successfully' }),
-    ApiResponse({ status: 400, description: 'Invalid input' }),
-    ApiResponse({ status: 401, description: 'Current password is incorrect' }),
+    ApiResponse({
+      status: 400,
+      description: 'Invalid input or current password is incorrect',
+    }),
   );
 };

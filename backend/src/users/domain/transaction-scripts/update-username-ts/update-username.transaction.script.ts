@@ -3,7 +3,6 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/users/infrastructure/user.repository';
@@ -14,6 +13,10 @@ import { UpdateUsernameResponseDto } from 'src/users/app/controllers/update-user
  * Transaction script for changing the signed-in user's username.
  * Verifies the current password, then enforces format and uniqueness
  * before persisting the change.
+ *
+ * A wrong current password is a 400 (bad input), not a 401: the session
+ * itself is valid, and the frontend's global 401 handler would otherwise
+ * clear the token and bounce the user to the login page.
  */
 @Injectable()
 export class UpdateUsernameTransactionScript {
@@ -53,7 +56,7 @@ export class UpdateUsernameTransactionScript {
       currentUser.password,
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Current password is incorrect');
+      throw new BadRequestException('Current password is incorrect');
     }
 
     const updatedUser = await this.userRepository.update(userId, {

@@ -16,6 +16,11 @@ account named by the JWT.
   id is accepted or checked (chronus's `user.userId !== userId` guard is
   dead code there because its action fills the command from the same token;
   nemesis does not carry the redundant field).
+- A wrong current password is `400`, not `401`: the session is valid and
+  only the input is wrong. The frontend's global axios handler treats any
+  `401` as "session expired" — it clears the token and hard-redirects to
+  `/login` — which would hide the form error and log the user out.
+  (Missing/invalid tokens still get `401` from the guard.)
 
 ## Commits (one git commit each, in order)
 
@@ -29,14 +34,15 @@ swagger) + `users/domain/transaction-scripts/update-username-TS/` (command
   `currentPassword` (`IsString`).
 - `UpdateUsernameCommand`: `{ userId: number; newUsername: string; currentPassword: string }`.
 - TS rules, in order:
-  1. Load user by `userId` (the entity includes the password hash) →
-     `404` if missing.
+  1. Load user by `userId` via `findByIdWithPassword` — the password column
+     is `select: false` on the entity, so a plain `findById` returns no
+     hash — `404` if missing.
   2. Trimmed `newUsername` outside 3–20 chars → `400`.
   3. Trimmed name equals current username → `400`
      "New username must be different from current username".
   4. `findByUsername(trimmed)` returns *another* user → `409`
      "Username already exists".
-  5. `bcrypt.compare(currentPassword, user.password)` fails → `401`
+  5. `bcrypt.compare(currentPassword, user.password)` fails → `400`
      "Current password is incorrect".
   6. `repository.update(userId, { username: trimmed })`.
   7. Return the projection `{ id, username }` — no password.
@@ -56,7 +62,7 @@ New `users/app/actions/update-password-action/` +
   "New password and confirmation password do not match", then delegates.
 - TS rules, in order:
   1. Load user by `userId` → `404`.
-  2. `bcrypt.compare(currentPassword, ...)` fails → `401`.
+  2. `bcrypt.compare(currentPassword, ...)` fails → `400`.
   3. `bcrypt.compare(newPassword, ...)` succeeds → `400`
      "New password must be different from current password".
   4. `IsPasswordStrongValidator.apply(newPassword)` → `400` (reused from
@@ -73,14 +79,14 @@ New `users/app/actions/update-password-action/` +
 - `PUT /users/username` with the correct current password and a free 3–20
   char name → `200` with `{ id, username }` showing the new name; login with
   the new name works and the old name no longer logs in.
-- Rejected: wrong current password (`401`), name already taken (`409`),
+- Rejected: wrong current password (`400`), name already taken (`409`),
   same name (`400`), name under 3 or over 20 chars (`400`), missing token
   (`401`).
 - `PUT /users/password` with matching new/confirm, a correct current
   password, and a strong new password → `200 { success: true }`; login with
   the old password fails, the new one works; the existing JWT stays valid
   (session kept).
-- Rejected: wrong current password (`401`), mismatched confirmation (`400`),
+- Rejected: wrong current password (`400`), mismatched confirmation (`400`),
   weak new password (`400`), new password identical to current (`400`).
 
 ## Out of scope

@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { UpdatePasswordTransactionScript } from '../update-password.transaction.script';
@@ -100,10 +101,13 @@ describe('UpdatePasswordTransactionScript', () => {
       expect(userRepository.update).not.toHaveBeenCalled();
     });
 
-    it('throws 401 when the current password is wrong', async () => {
+    it('throws 400 (BadRequest) when the current password is wrong', async () => {
       userRepository.findByIdWithPassword.mockResolvedValue(makeUser());
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
+      await expect(target.apply(makeCommand())).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
       await expect(target.apply(makeCommand())).rejects.toThrow(
         'Current password is incorrect',
       );

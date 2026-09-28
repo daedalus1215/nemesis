@@ -12,8 +12,10 @@ export const UpdateUsernameSwagger = () => {
       description: 'Username updated successfully',
       type: UpdateUsernameResponseDto,
     }),
-    ApiResponse({ status: 400, description: 'Invalid input' }),
-    ApiResponse({ status: 401, description: 'Current password is incorrect' }),
+    ApiResponse({
+      status: 400,
+      description: 'Invalid input or current password is incorrect',
+    }),
     ApiResponse({ status: 409, description: 'Username already exists' }),
   );
 };
