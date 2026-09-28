@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Not } from 'typeorm';
 import {
   Invoice,
   INVOICE_STATUS,
@@ -56,22 +56,39 @@ export class InvoiceRepository {
     });
   }
 
+  /**
+   * A draft is private to its issuer — the debtor never "has" one, so the
+   * debtor branch never matches `status = draft`, with or without a status
+   * filter (a draft-only filter for a debtor yields no rows).
+   */
   async findByUserIdWithStatusFilter(
     userId: number,
     statuses?: InvoiceStatusType[],
     direction?: InvoiceDirectionType,
   ): Promise<Invoice[]> {
-    const statusFilter =
-      statuses && statuses.length > 0 ? { status: In(statuses) } : {};
+    const hasStatusFilter = !!statuses && statuses.length > 0;
+    const issuerBranch = {
+      issuerUserId: userId,
+      ...(hasStatusFilter ? { status: In(statuses) } : {}),
+    };
+    const debtorBranch = hasStatusFilter
+      ? statuses.includes(INVOICE_STATUS.DRAFT)
+        ? null
+        : { debtorUserId: userId, status: In(statuses) }
+      : { debtorUserId: userId, status: Not(INVOICE_STATUS.DRAFT) };
     const where =
       direction === INVOICE_DIRECTION.ISSUED
-        ? [{ issuerUserId: userId, ...statusFilter }]
+        ? [issuerBranch]
         : direction === INVOICE_DIRECTION.RECEIVED
-          ? [{ debtorUserId: userId, ...statusFilter }]
-          : [
-              { issuerUserId: userId, ...statusFilter },
-              { debtorUserId: userId, ...statusFilter },
-            ];
+          ? debtorBranch
+            ? [debtorBranch]
+            : []
+          : debtorBranch
+            ? [issuerBranch, debtorBranch]
+            : [issuerBranch];
+    if (where.length === 0) {
+      return [];
+    }
     return this.repository.find({
       where,
       order: { dueDate: 'DESC', id: 'DESC' },
