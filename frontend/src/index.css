@@ -212,3 +212,14 @@ button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+/* The Tauri app's webviews (WebKitGTK, Android's WebView) blink and glitch
+   through animations, so the app runs without them (see src/tauri/motion.ts).
+   Outside any @layer and !important, so it beats CSS modules and MUI's inline
+   styles alike. Spinners keep turning: a still one looks frozen. */
+:root[data-motion='off'] *:not(.MuiCircularProgress-root):not(.MuiCircularProgress-root *):not(.MuiLinearProgress-root *),
+:root[data-motion='off'] *::before,
+:root[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
