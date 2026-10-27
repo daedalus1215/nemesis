@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Logo } from "../../../components/Logo/Logo";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Typography } from "@mui/material";
 import { LinkAndTitle } from "../../../components/LinkAndTitle/LinkAndTitle";
+import { isTauri } from "../../../tauri/api-config";
+import { openConnectionSettings } from "../../../tauri/connection-settings";
 import styles from "./Login.module.css";
 
 type LoginProps = {
@@ -26,8 +29,16 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       if (!success) {
         setError("Invalid credentials");
       }
-    } catch {
-      setError("An error occurred during login");
+    } catch (err) {
+      if (axios.isAxiosError(err) && !err.response) {
+        setError(
+          isTauri()
+            ? "Couldn't reach Nemesis. Check your connection, or the server settings below."
+            : "Couldn't reach Nemesis. Check your connection and try again."
+        );
+      } else {
+        setError("An error occurred during login");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -86,6 +97,15 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             link="/register"
             linkText="Register here"
           />
+          {isTauri() && (
+            <Button
+              size="small"
+              onClick={() => openConnectionSettings()}
+              sx={{ alignSelf: "center", textTransform: "none" }}
+            >
+              Server settings
+            </Button>
+          )}
         </div>
       </div>
     </div>
