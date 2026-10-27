@@ -5,7 +5,7 @@ import { resolve } from 'path'
 import { env } from './vite.env.config'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   // esbuild 0.28+ (pinned via overrides for GHSA-gv7w-rqvm-qjhr) refuses to
   // lower some destructuring to the old es2020 default. build.target below
   // covers `vite build`; this covers the dev-server dependency pre-bundling.
@@ -17,6 +17,10 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // The Tauri app (npm run build:tauri, and `tauri dev`) ships these
+      // files itself, so a service worker caching them only risks serving
+      // stale ones.
+      disable: mode === 'tauri',
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       strategies: 'generateSW',
@@ -103,4 +107,4 @@ export default defineConfig({
       }
     }
   }
-})
+}))
