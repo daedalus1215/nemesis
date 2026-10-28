@@ -4,13 +4,14 @@ import { ChangeUsernameForm } from "./components/ChangeUsernameForm/ChangeUserna
 import { ChangePasswordForm } from "./components/ChangePasswordForm/ChangePasswordForm";
 import { ThemeSettings } from "./components/ThemeSettings/ThemeSettings";
 import { ConnectionSettings } from "./components/ConnectionSettings/ConnectionSettings";
+import { OfflineSettings } from "./components/OfflineSettings/OfflineSettings";
 import styles from "./SettingsPage.module.css";
 
 /**
  * Account settings: change username, change password, and the light/dark/
- * auto theme choice, plus the server connection in the desktop and Android
- * apps. Reachable from the sidebar (desktop) and the top-bar avatar (all
- * viewports).
+ * auto theme choice, plus the server connection and offline copy in the
+ * desktop and Android apps. Reachable from the sidebar (desktop) and the
+ * top-bar avatar (all viewports).
  */
 export const SettingsPage: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ export const SettingsPage: React.FC = () => {
         <ChangePasswordForm />
         <ThemeSettings />
         <ConnectionSettings />
+        <OfflineSettings />
       </div>
     </AppShell>
   );
