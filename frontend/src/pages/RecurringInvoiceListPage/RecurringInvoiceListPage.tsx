@@ -4,9 +4,12 @@ import { useFetchRecurringInvoices } from "./useFetchRecurringInvoices";
 import { AppShell } from "../../components/AppShell/AppShell";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
+import {
+  RECURRING_INVOICE_STATUS_FILTERS,
+  type RecurringInvoiceStatusFilter,
+} from "./recurring-invoice-filters";
 import styles from "./RecurringInvoiceListPage.module.css";
 
-type StatusFilter = "all" | "ACTIVE" | "PAUSED" | "COMPLETED" | "CANCELLED";
 
 const formatSchedule = (intervalType: string, intervalCount: number): string => {
   const unit = intervalCount === 1 ? intervalType : `${intervalType}s`;
@@ -16,7 +19,7 @@ const formatSchedule = (intervalType: string, intervalCount: number): string => 
 export const RecurringInvoiceListPage: React.FC = () => {
   const navigate = useNavigate();
   const { users } = useFetchUsers();
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ACTIVE");
+  const [statusFilter, setStatusFilter] = useState<RecurringInvoiceStatusFilter>("ACTIVE");
 
   const filterValue = statusFilter === "all" ? undefined : statusFilter;
   const { recurringInvoices, loading, error } = useFetchRecurringInvoices(filterValue);
@@ -69,7 +72,7 @@ export const RecurringInvoiceListPage: React.FC = () => {
       </div>
 
       <div className={styles.filterButtons}>
-        {(["ACTIVE", "all", "PAUSED", "COMPLETED", "CANCELLED"] as StatusFilter[]).map(
+        {RECURRING_INVOICE_STATUS_FILTERS.map(
           (filter) => (
             <button
               key={filter}
