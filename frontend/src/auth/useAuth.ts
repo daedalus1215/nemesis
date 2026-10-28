@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import api from '../api/axios.interceptor';
 import { isAccessDenied } from '../tauri/cloudflare-access';
+import { claimOfflineData, clearOfflineData } from '../offline/offline-data';
 
 type User = {
   id: number;
@@ -63,6 +64,11 @@ export const useAuthProvider = () => {
         username: decoded.username
       };
 
+      // The app's stored data (src/offline) may be another user's: it's
+      // deleted before this login can be shown any of it.
+      await claimOfflineData(String(decoded.sub)).catch((error) =>
+        console.error('Could not check whose offline data this is:', error)
+      );
       localStorage.setItem('jwt_token', access_token);
       setUser(userData);
       return true;
@@ -81,6 +87,10 @@ export const useAuthProvider = () => {
   const logout = useCallback(() => {
     localStorage.removeItem('jwt_token');
     setUser(null);
+    // Nothing kept for offline use outlives the session it belongs to.
+    clearOfflineData().catch((error) =>
+      console.error('Could not delete the offline data:', error)
+    );
   }, []);
 
   const register = useCallback(async (username: string, password: string): Promise<true | string> => {
