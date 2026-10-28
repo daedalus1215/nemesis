@@ -11,10 +11,18 @@ export class ActivateRecurringInvoiceTransactionScript {
     private readonly recurringInvoiceRepository: RecurringInvoiceRepository,
   ) {}
 
-  async execute(id: number): Promise<RecurringInvoice> {
+  async execute(id: number, issuerUserId: number): Promise<RecurringInvoice> {
     const recurringInvoice = await this.recurringInvoiceRepository.findById(id);
     if (!recurringInvoice) {
       throw new Error('Recurring invoice not found');
+    }
+
+    // Before the status checks, so their errors don't describe someone
+    // else's recurring invoice.
+    if (recurringInvoice.issuerUserId !== issuerUserId) {
+      throw new Error(
+        'Unauthorized: Only the issuer can activate this recurring invoice',
+      );
     }
 
     if (recurringInvoice.status === RECURRING_INVOICE_STATUS.CANCELLED) {
