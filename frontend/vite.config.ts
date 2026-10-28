@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       strategies: 'generateSW',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'favicon-192x192.png', 'favicon-512x512.png'],
+      includeAssets: ['favicon.ico', 'favicon.svg', 'favicon-96x96.png', 'apple-touch-icon.png', 'favicon-192x192.png', 'favicon-512x512.png', 'favicon-maskable-512x512.png'],
       manifest: {
         name: 'Nemesis',
         short_name: 'Nemesis',
@@ -32,17 +32,25 @@ export default defineConfig(({ mode }) => ({
         theme_color: '#000000',
         background_color: '#ffffff',
         icons: [
+          // The icons (npm run icons) are rounded tiles; the maskable one is
+          // full bleed, for launchers that shape it themselves.
           {
             src: '/favicon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
           },
           {
             src: '/favicon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
+          },
+          {
+            src: '/favicon-maskable-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           },
           {
             src: '/apple-touch-icon.png',
