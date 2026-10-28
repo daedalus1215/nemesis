@@ -55,6 +55,12 @@ export type OfflineAdapterDeps = {
   onAccessDeniedChange?: (denied: boolean) => void;
   /** Asks for a check on whether Nemesis is back, after refusing a write. */
   requestProbe?: () => void;
+  /**
+   * Bumped whenever the stored data is cleared or changes hands. An answer
+   * to a request sent before then isn't stored, so a signed-out user's data
+   * can't land back in the store after it was emptied.
+   */
+  generation?: () => number;
 };
 
 const synthesizeResponse = (
@@ -111,6 +117,7 @@ export const createOfflineAdapter = ({
   onAccessDeniedChange,
   requestProbe,
   readTimeoutMs,
+  generation = () => 0,
 }: OfflineAdapterDeps): AxiosAdapter => {
   // Set while the last request to go out found the backend unreachable.
   // Reads that can be answered locally then are, instead of each waiting
@@ -156,9 +163,14 @@ export const createOfflineAdapter = ({
     const uri = getUri(config);
 
     const fetchAndStore = async () => {
+      const sentIn = generation();
       const response = await send(config);
       // A captive portal's login page can come back as a 200 too.
-      if (typeof response.data === 'string' && isJson(response.data)) {
+      if (
+        sentIn === generation() &&
+        typeof response.data === 'string' &&
+        isJson(response.data)
+      ) {
         await store
           .putResponse(uri, response.data)
           .catch(err => console.warn('Could not store offline response:', err));
