@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import api from '../../api/axios.interceptor';
 import { Invoice } from '../../api/responses/invoice.response';
+import { invoiceListParams, statusesKey } from './invoice-filters';
 
 interface UseInvoicesResult {
   invoices: Invoice[];
@@ -17,22 +18,15 @@ export const useFetchInvoices = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const statusKey = useMemo(() => {
-    return statuses && statuses.length > 0 ? statuses.sort().join(',') : 'all';
-  }, [statuses]);
+  const statusKey = useMemo(() => statusesKey(statuses), [statuses]);
 
   const fetchInvoices = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const params: Record<string, string> = {};
-      if (statusKey !== 'all') {
-        params.statuses = statusKey;
-      }
-      if (direction) {
-        params.direction = direction;
-      }
-      const response = await api.get('/invoices', { params });
+      const response = await api.get('/invoices', {
+        params: invoiceListParams(statusKey, direction),
+      });
       setInvoices(response.data.invoices);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
