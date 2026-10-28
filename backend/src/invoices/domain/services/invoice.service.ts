@@ -51,6 +51,27 @@ export class InvoiceService {
     return await this.getInvoiceByIdTransactionScript.execute(invoiceId);
   }
 
+  /**
+   * The invoice, if `userId` may see it: its issuer always, its debtor once
+   * it's no longer a draft. The same rule as the lists
+   * (InvoiceRepository: a draft is private to its issuer). Null otherwise,
+   * so a caller can't tell someone else's invoice from a missing one.
+   */
+  async getInvoiceForUser(
+    invoiceId: number,
+    userId: number,
+  ): Promise<Invoice | null> {
+    const invoice = await this.getInvoiceById(invoiceId);
+    if (!invoice) {
+      return null;
+    }
+    const isIssuer = invoice.issuerUserId === userId;
+    const isDebtor =
+      invoice.debtorUserId === userId &&
+      invoice.status !== INVOICE_STATUS.DRAFT;
+    return isIssuer || isDebtor ? invoice : null;
+  }
+
   async markOverdueInvoices(): Promise<number> {
     return await this.markOverdueInvoicesTransactionScript.execute();
   }
