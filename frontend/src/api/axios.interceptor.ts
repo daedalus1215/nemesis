@@ -74,9 +74,12 @@ api.interceptors.response.use(
   async (error) => {
     // Cloudflare Access turned the Tauri app's service token away before the
     // request reached Nemesis. Its 401 isn't the session expiring, so don't
-    // sign out over it; ask for a working token instead.
+    // sign out over it; ask for a working token instead. Not for the offline
+    // layer's background requests: the app shell's banner reports those.
     if (isAccessDenied(error)) {
-      openConnectionSettings('access-denied');
+      if (!error.config?.noOfflineFallback) {
+        openConnectionSettings('access-denied');
+      }
       return Promise.reject(error);
     }
     if (error.response) {
