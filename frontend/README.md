@@ -24,7 +24,8 @@ npm test                # unit tests (vitest)
 
 Linux builds need WebKitGTK and friends (`libwebkit2gtk-4.1-dev`,
 `librsvg2-dev`; on Arch, `webkit2gtk-4.1 librsvg`) and Rust 1.90 or later.
-The app-only code is in `src/tauri/`; on the web it does nothing.
+The app-only code is in `src/tauri/` and `src/offline/`; on the web it does
+nothing.
 
 The token is entered on the device, never built into the app: anyone signed in
 to GitHub can download this repo's CI artifacts. To make one, create a service
@@ -32,6 +33,47 @@ token in Cloudflare Zero Trust, then add a policy to Nemesis's Access
 application with the **Service Auth** action that includes it. Leave both
 token fields blank for a server Access doesn't protect, such as a dev server on
 plain HTTP.
+
+### Offline
+
+The desktop and Android apps show what was last loaded while Nemesis can't be
+reached. Read-only: changes always need a connection. The web app needs the
+server.
+
+- **What's stored.** A copy of everything the app loads. About 10 seconds
+  after launch, then every 30 minutes (and as soon as the server is back
+  after an outage), it also fetches what its screens show: the profile and
+  balances, every account with its latest 20 payments, and every filter of
+  the invoice and recurring invoice lists. Settings → Offline says when that
+  last finished, and **Refresh now** runs it.
+- **What works offline.** Looking: home, accounts and their details (older
+  pages of payments only if they were opened before), the invoice lists with
+  any filter, any invoice or recurring invoice, Settings. A banner under the
+  title bar says the data is stored on the device, and when it was refreshed.
+- **What doesn't.** Any change: sending money, transfers, creating, sending,
+  paying or cancelling invoices, recurring invoice changes, account settings,
+  logging in. Nothing is queued to send later: replayed hours on, a transfer
+  would run against balances that may have changed. While the app knows the
+  server is unreachable, a change is refused without being sent ("You're
+  offline, so this wasn't sent"). One that was sent but got no answer says
+  it may or may not have gone through: check before trying again.
+- **Signing out deletes everything stored on the device.** Logging in as
+  someone else does too. An expired session still signs you out, as on the
+  web; the stored copy waits for your next login.
+- **Cloudflare Access** turning the device's token away is ridden out the
+  same way, with a banner that links to the connection settings.
+
+For whoever changes the code:
+
+- The data lives in the IndexedDB database `nemesis-offline`. **Never rename
+  it**: that orphans what's stored on devices.
+- Stored answers are keyed by their exact URL, query string included. A
+  screen's request only works offline if the same URL was loaded before or
+  is prefetched, so a new screen's requests belong in
+  `src/offline/prefetch.ts`, built with the same helper as the screen (as
+  `invoice-filters.ts` is for the invoice list).
+- The layer is ported from Omega's, minus its outbox; `src/offline/README.md`
+  lists what differs.
 
 ### Android
 
