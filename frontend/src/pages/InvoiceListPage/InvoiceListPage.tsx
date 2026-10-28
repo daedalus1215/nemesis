@@ -5,9 +5,12 @@ import { AppShell } from "../../components/AppShell/AppShell";
 import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 import { useAuth } from "../../auth/useAuth";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
+import {
+  INVOICE_STATUS_FILTERS,
+  invoiceFilterQuery,
+  type InvoiceStatusFilter,
+} from "./invoice-filters";
 import styles from "./InvoiceListPage.module.css";
-
-type InvoiceStatusFilter = "pending" | "all" | "draft" | "sent" | "received" | "paid" | "overdue" | "cancelled";
 
 export const InvoicePage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,21 +18,7 @@ export const InvoicePage: React.FC = () => {
   const { users } = useFetchUsers();
   const [statusFilter, setStatusFilter] = useState<InvoiceStatusFilter>("pending");
 
-  const statuses =
-    statusFilter === "all"
-      ? undefined
-      : statusFilter === "pending"
-      ? ["sent", "overdue"]
-      : statusFilter === "sent" || statusFilter === "received"
-      ? ["sent", "overdue", "paid", "cancelled"]
-      : [statusFilter];
-
-  const direction =
-    statusFilter === "sent"
-      ? "issued"
-      : statusFilter === "received"
-      ? "received"
-      : undefined;
+  const { statuses, direction } = invoiceFilterQuery(statusFilter);
 
   const { invoices, loading, error } = useFetchInvoices(statuses, direction);
 
@@ -102,7 +91,7 @@ export const InvoicePage: React.FC = () => {
       </div>
 
       <div className={styles.filterButtons}>
-        {(["pending", "all", "draft", "sent", "received", "paid", "overdue", "cancelled"] as InvoiceStatusFilter[]).map(
+        {INVOICE_STATUS_FILTERS.map(
           (filter) => (
             <button
               key={filter}
