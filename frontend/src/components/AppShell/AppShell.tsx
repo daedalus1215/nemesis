@@ -12,6 +12,7 @@ import {
 import { BottomNavigation } from "../BottomNavigation/BottomNavigation";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import { SignOutButton } from "../SignOutButton/SignOutButton";
+import { OfflineBanner } from "../OfflineBanner/OfflineBanner";
 import { useAuth } from "../../auth/useAuth";
 import styles from "./AppShell.module.css";
 
@@ -101,6 +102,8 @@ export const AppShell: React.FC<AppShellProps> = ({
             <SignOutButton />
           </div>
         </header>
+
+        <OfflineBanner />
 
         <main className={styles.content}>
           <div className={styles.contentInner}>{children}</div>
