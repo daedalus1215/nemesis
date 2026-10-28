@@ -241,6 +241,66 @@ describe('InvoiceService', () => {
     });
   });
 
+  describe('getInvoiceForUser', () => {
+    const issuerUserId = 10;
+    const debtorUserId = 20;
+    const strangerUserId = 30;
+
+    it.each([
+      ['its issuer', issuerUserId, INVOICE_STATUS.SENT],
+      ['its issuer, while a draft', issuerUserId, INVOICE_STATUS.DRAFT],
+      ['its debtor', debtorUserId, INVOICE_STATUS.SENT],
+      ['its debtor, once paid', debtorUserId, INVOICE_STATUS.PAID],
+    ])('should return the invoice to %s', async (_, viewer, status) => {
+      // Arrange
+      const mockInvoice = createMockInvoice({
+        id: invoiceId,
+        issuerUserId,
+        debtorUserId,
+        status,
+      });
+      getInvoiceByIdTransactionScript.execute.mockResolvedValue(mockInvoice);
+
+      // Act
+      const result = await target.getInvoiceForUser(invoiceId, viewer);
+
+      // Assert
+      expect(result).toEqual(mockInvoice);
+    });
+
+    it.each([
+      ['its debtor, while a draft', debtorUserId, INVOICE_STATUS.DRAFT],
+      ['anyone else', strangerUserId, INVOICE_STATUS.SENT],
+    ])('should return null to %s', async (_, viewer, status) => {
+      // Arrange
+      getInvoiceByIdTransactionScript.execute.mockResolvedValue(
+        createMockInvoice({
+          id: invoiceId,
+          issuerUserId,
+          debtorUserId,
+          status,
+        }),
+      );
+
+      // Act
+      const result = await target.getInvoiceForUser(invoiceId, viewer);
+
+      // Assert
+      expect(result).toBeNull();
+    });
+
+    it('should return null when invoice not found', async () => {
+      // Arrange
+      getInvoiceByIdTransactionScript.execute.mockResolvedValue(null);
+
+      // Act
+      const result = await target.getInvoiceForUser(invoiceId, issuerUserId);
+
+      // Assert
+      expect(result).toBeNull();
+    });
+  });
+
   describe('applyPaymentToInvoice', () => {
     it('should throw error when invoice not found', async () => {
       // Arrange
