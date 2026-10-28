@@ -28,8 +28,19 @@ export class RecurringInvoiceService {
     return this.createRecurringInvoiceTS.execute(input);
   }
 
-  async get(id: number): Promise<RecurringInvoice | null> {
-    return this.recurringInvoiceRepository.findById(id);
+  /**
+   * The recurring invoice, if `issuerUserId` issued it: as with the list,
+   * only the issuer sees the schedule (the debtor sees the invoices it
+   * creates). Null otherwise.
+   */
+  async get(
+    id: number,
+    issuerUserId: number,
+  ): Promise<RecurringInvoice | null> {
+    const recurringInvoice = await this.recurringInvoiceRepository.findById(id);
+    return recurringInvoice?.issuerUserId === issuerUserId
+      ? recurringInvoice
+      : null;
   }
 
   async list(
@@ -42,12 +53,12 @@ export class RecurringInvoiceService {
     );
   }
 
-  async activate(id: number): Promise<RecurringInvoice> {
-    return this.activateRecurringInvoiceTS.execute(id);
+  async activate(id: number, issuerUserId: number): Promise<RecurringInvoice> {
+    return this.activateRecurringInvoiceTS.execute(id, issuerUserId);
   }
 
-  async pause(id: number): Promise<RecurringInvoice> {
-    return this.pauseRecurringInvoiceTS.execute(id);
+  async pause(id: number, issuerUserId: number): Promise<RecurringInvoice> {
+    return this.pauseRecurringInvoiceTS.execute(id, issuerUserId);
   }
 
   async cancel(id: number, issuerUserId: number): Promise<RecurringInvoice> {
