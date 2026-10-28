@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import styles from "./TransactionHistorySection.module.css";
 import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
-import { useAccountTransactions } from "../useAccountTransactions";
+import {
+  ACCOUNT_PAYMENTS_PAGE_SIZE,
+  useAccountTransactions,
+} from "../useAccountTransactions";
 import { AccountDetail } from "../../../hooks/useAccountDetail";
 
 type TransactionHistorySectionProps = {
@@ -22,7 +25,7 @@ export const TransactionHistorySection: React.FC<
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useAccountTransactions(account.id, 20);
+  } = useAccountTransactions(account.id, ACCOUNT_PAYMENTS_PAGE_SIZE);
 
   const loadMore = useCallback(() => {
     if (isLoadingMoreRef.current || !hasNextPage || transactionsLoading || isFetchingNextPage) {
