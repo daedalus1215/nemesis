@@ -1,6 +1,18 @@
 import { useInfiniteQuery, InfiniteData } from "@tanstack/react-query";
 import api from "../../api/axios.interceptor";
 
+/** Transactions per page of an account's history. */
+export const ACCOUNT_PAYMENTS_PAGE_SIZE = 20;
+
+/**
+ * GET /accounts/:id/payments query params. Shared with the offline prefetch
+ * (src/offline/prefetch.ts), whose stored answers are keyed by them.
+ */
+export const accountPaymentsParams = (limit: number, offset: number) => ({
+  limit,
+  offset,
+});
+
 type Transaction = {
   id: number;
   amount: number;
@@ -36,7 +48,7 @@ type UseAccountTransactionsResult = {
 
 export const useAccountTransactions = (
   accountId: number,
-  limit: number = 20,
+  limit: number = ACCOUNT_PAYMENTS_PAGE_SIZE,
 ): UseAccountTransactionsResult => {
   const {
     data,
@@ -49,7 +61,7 @@ export const useAccountTransactions = (
     queryKey: ['accountPayments', accountId, limit],
     queryFn: async ({ pageParam = 0 }) => {
       const response = await api.get(`/accounts/${accountId}/payments`, {
-        params: { limit, offset: pageParam }
+        params: accountPaymentsParams(limit, pageParam)
       });
       
       // Transform transactions to add type and other account info
