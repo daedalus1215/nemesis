@@ -1,0 +1,50 @@
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  background-color: color-mix(in srgb, var(--color-warning) 14%, var(--color-background));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-warning) 45%, transparent);
+  color: var(--color-text-primary);
+  /* Mobile: stays under the sticky top bar while the document scrolls. */
+  position: sticky;
+  top: var(--topbar-height);
+  z-index: 899;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-warning);
+}
+
+/* The button sits beside the text where there's room, under it on phones. */
+.body {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+.text {
+  flex: 1 1 260px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.action {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action:hover {
+  background-color: color-mix(in srgb, var(--color-warning) 18%, transparent);
+}
