@@ -38,3 +38,14 @@ so a fix in one is easy to carry to the others.
   the stored list, when the list is the newer copy: the backend maps both
   the same way.
 - `offline-store.ts` keeps only `responses` and `meta`.
+- `prefetch.ts` replaces `prefetch-calendar.ts`: the same one-at-a-time run
+  that stops at the first sign of trouble, fetching what Nemesis's screens
+  show. The list pages and it build their queries with the same helpers
+  (`invoice-filters.ts`, `recurring-invoice-filters.ts`,
+  `accountPaymentsParams`), since stored answers are keyed by exact URI.
+- `install-offline-support.ts` keeps Omega's ownership rule (another user's
+  data is deleted at login) and schedule (every 30 minutes, at once when the
+  server comes back), without the flusher. Sign-out deletes everything; a
+  generation counter keeps answers already on their way from being stored
+  after that. `offline-data.ts` is how login, sign-out and Settings reach it
+  without pulling IndexedDB into the web bundle.
