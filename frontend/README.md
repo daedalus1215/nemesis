@@ -17,7 +17,8 @@ npm run desktop:dev     # desktop app against the Vite dev server
 npm run desktop:build   # release build: src-tauri/target/release/nemesis-desktop,
                         # plus .deb, .rpm and AppImage bundles
 npm run build:tauri     # the web build the apps ship (no service worker)
-npm run icons           # redraw the desktop and Android icons from src/assets/nemesis.svg
+npm run icons           # redraw the logo, favicons, desktop and Android icons
+                        # (the artwork is drawn in scripts/generate-icons.mjs)
 npm test                # unit tests (vitest)
 ```
 
