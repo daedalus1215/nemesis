@@ -1,4 +1,4 @@
-import { configureApiForTauri } from '../api/axios.interceptor';
+import api, { configureApiForTauri } from '../api/axios.interceptor';
 import { checkConnection, type ConnectionCheck } from './connection-check';
 import { withRequestSignal } from './with-request-signal';
 
@@ -35,6 +35,11 @@ export const testApiConfig = async (
 };
 
 export const applyApiConfig = async (config: ApiConfig): Promise<void> => {
-  const { fetch } = await import('@tauri-apps/plugin-http');
+  const [{ fetch }, { installOfflineSupport }] = await Promise.all([
+    import('@tauri-apps/plugin-http'),
+    import('../offline/install-offline-support'),
+  ]);
   configureApiForTauri(config, withRequestSignal(fetch));
+  // Shows what was last loaded while Nemesis can't be reached (src/offline).
+  installOfflineSupport(api);
 };
