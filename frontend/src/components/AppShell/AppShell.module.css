@@ -128,11 +128,23 @@
   color: #fff;
 }
 
-/* Top-bar avatar doubles as the settings entry point. */
-.avatarLink {
-  display: inline-flex;
-  text-decoration: none;
+/* Mobile top bar's way into Settings (the bottom navigation has no entry for
+   it). Matches the theme toggle beside it. */
+.settingsLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.settingsLink:hover {
+  border-color: var(--color-primary);
 }
 
 /* ---------- Main column ---------- */
