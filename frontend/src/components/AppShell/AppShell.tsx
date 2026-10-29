@@ -92,13 +92,12 @@ export const AppShell: React.FC<AppShellProps> = ({
             <ThemeToggle />
             <Link
               to="/settings"
-              className={styles.avatarLink}
+              className={styles.settingsLink}
               title="Settings"
-              aria-label="Account settings"
+              aria-label="Settings"
             >
-              <div className={styles.avatar}>{initials}</div>
+              <Settings fontSize="small" />
             </Link>
-            <div className={styles.avatar}>{initials}</div>
             <SignOutButton />
           </div>
         </header>
