@@ -78,21 +78,24 @@ For whoever changes the code:
 ### Android
 
 The app is `com.nemesis.app` (arm64). CI builds it as a signed release APK
-when you push a version tag:
+only when you run `.github/workflows/tauri-android-release.yml` by hand. To
+release, push a version tag and run the workflow on it:
 
 ```bash
 git tag v0.2.0 && git push origin v0.2.0
+gh workflow run tauri-android-release.yml --ref v0.2.0
 ```
 
-`.github/workflows/tauri-android-release.yml` then attaches
-`nemesis-0.2.0.apk` to a GitHub Release (Actions → Run workflow builds one
-without publishing it). Install it by opening the APK on the phone, or with
+(or Actions → Run workflow, picking the tag under "Use workflow from"). It
+attaches `nemesis-0.2.0.apk` to a GitHub Release for the tag; run on a
+branch, it builds one without publishing it. Install it by opening the APK on
+the phone, or with
 `gh release download v0.2.0 --repo daedalus1215/nemesis -p '*.apk'` and
 `adb install -r nemesis-0.2.0.apk`. Being a release build, nothing connected
 over USB can read what the app stores (`run-as`, the WebView inspector).
 
-Pull requests build the debug app (`com.nemesis.app.debug`,
-`tauri-android-build.yml`; Run workflow builds one from any branch), which
+The debug app (`com.nemesis.app.debug`) is built only when you run
+`tauri-android-build.yml` by hand (Actions → Run workflow, on any branch); it
 installs beside the release one. Download the `nemesis-android-debug-apk`
 artifact and `adb install -r` it.
 
