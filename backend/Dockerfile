@@ -42,6 +42,12 @@ ENV NODE_ENV=production
 COPY package*.json ./
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
+# ⚠️ file: dependencies (patches/deepmerge) install as symlinks OUT of node_modules
+#    (node_modules/deepmerge -> ../patches/deepmerge). Copying only node_modules leaves
+#    them dangling: the image builds and the app boots — nothing loads deepmerge on the
+#    critical path today — but any code that requires it crashes with MODULE_NOT_FOUND
+#    in the image while working locally, where patches/ exists in the working tree.
+COPY --from=deps /app/patches ./patches
 # Migrations compile into dist/ and app.module.ts points TypeORM at __dirname, so
 # migrationsRun finds them here.
 USER node
